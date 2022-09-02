@@ -4,18 +4,10 @@ module Handler.Home where
 
 import Import
 
-getHomeR :: Handler Html
-getHomeR = defaultLayout $ do
-    setTitle "Projekt Backend"
-    [whamlet|"Hallo Welt"|]
-
-
-
--- Define our data that will be used for creating the form.
-data FileForm = FileForm
-    { fileInfo :: FileInfo
-    , fileDescription :: Text
-    }
+getHomeR :: Handler ()
+getHomeR = do 
+    sendFile typeHtml "static/index.html"
+    sendFile typeJavascript "static/assets/index.051e5e5a.js"
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
