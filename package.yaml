@@ -2,10 +2,6 @@ name:    fp-projekt-backend
 version: "0.0.0"
 
 dependencies:
-<<<<<<< HEAD
-- base
-- yesod-core
-=======
 
 - base >=4.9.1.0 && <5
 - yesod >=1.6 && <1.7
@@ -42,14 +38,11 @@ dependencies:
 - case-insensitive
 - wai
 - foreign-store
->>>>>>> b74e4d9500cacf666460ef309a0bd1ed01ad5e8a
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
 library:
   source-dirs: src
-<<<<<<< HEAD
-=======
   when:
   - condition: (flag(dev)) || (flag(library-only))
     then:
@@ -63,16 +56,11 @@ library:
       - -Wall
       - -fwarn-tabs
       - -O2
->>>>>>> b74e4d9500cacf666460ef309a0bd1ed01ad5e8a
 
 # Runnable executable for our application
 executables:
   fp-projekt-backend:
-<<<<<<< HEAD
-    main: Main.hs
-=======
     main: main.hs
->>>>>>> b74e4d9500cacf666460ef309a0bd1ed01ad5e8a
     source-dirs: app
     ghc-options:
     - -threaded
@@ -80,8 +68,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - fp-projekt-backend
-<<<<<<< HEAD
-=======
     when:
     - condition: flag(library-only)
       buildable: false
@@ -107,4 +93,3 @@ flags:
     description: Turn on development settings, like auto-reload templates.
     manual: false
     default: false
->>>>>>> b74e4d9500cacf666460ef309a0bd1ed01ad5e8a
