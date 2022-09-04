@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
-{-# LANGUAGE TypeFamilies      #-}
-{-# LANGUAGE ViewPatterns      #-}
-module Foundation where
-
-import Yesod.Core
-
-data App = App
-
-mkYesodData "App" $(parseRoutesFile "routes.yesodroutes")
-
-instance Yesod App
-=======
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
@@ -112,4 +97,3 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
->>>>>>> b74e4d9500cacf666460ef309a0bd1ed01ad5e8a
