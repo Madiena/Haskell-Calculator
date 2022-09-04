@@ -3,5 +3,7 @@
 
 / HomeR GET
 
+/function FunctionR POST
+
 
 /static StaticR Static appStatic
