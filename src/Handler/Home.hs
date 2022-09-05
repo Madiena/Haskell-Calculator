@@ -20,5 +20,11 @@ instance FromJSON Function
 
 postFunctionR :: Handler Value
 postFunctionR = do
-    fun <- requireInsecureJsonBody :: Handler Value
+    fun <- requireInsecureJsonBody :: Handler Function
+--    handleFunction fun
     returnJson fun
+
+--handleFunction :: Function -> Handler Value
+--handleFunction f = 
+    --das ist die Funktion, in der die eingegebene Funktion an den Parser kommt und die ganze Logik passiert
+
