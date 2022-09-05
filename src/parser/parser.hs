@@ -1,8 +1,10 @@
 
+module Parser(function, exp1, exp2, exp3, opLow, opMed, zero, dig, number, value, parseFunction) where
 import Text.ParserCombinators.Parsec
-
-function = chainl1 exp1 opLow
- {-do
+function = do
+   fmap (: []) many (char 'H')
+{-function = chainl1 exp1 opLow
+ do
     f <- function
     op <- opLow
     rest <- exp1
@@ -39,5 +41,5 @@ number = do
 -- : [] = \x --> Lambda wird direkt an fmap übergeben (\x -> [x])
 value = number <|> fmap (: []) (char 'x') 
 
-parseFunction :: String -> Either ParseError String
-parseFunction = parse function "(f)"
+parseFunction :: String -> Either ParseError [[String]]
+parseFunction = parse   function ""
