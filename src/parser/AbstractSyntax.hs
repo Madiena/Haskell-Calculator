@@ -1,14 +1,21 @@
 module AbstractSyntax(Expression(..), OpCode(..)) where
+import Data.Functor.Contravariant (Op)
 
 data Expression = Function {name :: String, param :: String, expr :: Expression} 
-    | Binary Expression OpCode Expression 
+    | Binary OpCode Expression Expression
     | Var  String 
     | Application String [Expression]
-    | Number String
+    | Number Integer
     deriving (Show, Eq)
 
+--Konstruktor für data wie anwenden?
+data OpCode = Add | Sub | Mul | Div deriving (Eq)
 
-data OpCode = Add | Sub | Mul | Div deriving (Show, Eq)
+instance Show OpCode where
+    show Add = "+"
+    show Sub = "-"
+    show Mul = "*"
+    show Div = "/"
 
 {-instance Show a => Show (Expression a) where
 show (Function ident expr) = "Function(" ++ Prelude.show ident ++ ") = (" ++ AbstractSyntax.show expr ++ ")"

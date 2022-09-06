@@ -1,18 +1,18 @@
 
 module Parser(function, parseFunction) where
-import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec hiding (token)
 import AbstractSyntax
 import Control.Monad
-import Text.Read (Lexeme(Char))
+
 
 function :: Parser Expression
 function = do
     name <- identifier
-    char '('
+    token '('
     param <- identifier
-    char ')'
-    char '='
-    simpleExpr
+    token ')'
+    token '='
+    simpleExprLow
 
 identifier :: Parser String
 -- [a-zA-Z][a-zA-Z0-9]*
@@ -27,28 +27,53 @@ identifier = do
         secondPart :: Parser [Char]
         secondPart = many (oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
 
-simpleExpr :: Parser Expression
-simpleExpr = binary <|> var <|> application
+--Binary Expression wird zur Simple Expression durch Konzept
+--der Präzedenzen
+
+-- + & -
+simpleExprLow :: Parser Expression
+simpleExprLow = chainl1 simpleExprMed opCodeLow
+
+-- * & /
+simpleExprMed :: Parser Expression
+simpleExprMed = chainl1 simpleExprUnary opCodeMed
+
+-- negation
+simpleExprUnary :: Parser Expression
+simpleExprUnary = do {
+    token '-';
+    Binary Sub (Number 0) <$> simpleExprHigh;
+} <|> simpleExprHigh
+
+-- () | value
+simpleExprHigh :: Parser Expression
+simpleExprHigh = number <|> var <|> do {
+    token '(';
+    expr <- simpleExprLow;
+    token ')';
+    return expr;
+}
 
 number :: Parser Expression
 number = do
     firstDigit <- head
     followingDigits <- tail
-    return (Number (firstDigit : followingDigits))
+    return (Number $ read (firstDigit : followingDigits))
     where
         head :: Parser Char
         head = oneOf ['1'..'9']
         tail :: Parser [Char]
         tail = many (oneOf ['0'..'9'])
 
-binary :: Parser Expression
-binary = do
-    simpleExpr
-    opCode
-    simpleExpr
+opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
+--fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
+opParser operator = fmap (const  (Binary operator)) (token (head.show$operator))
 
-opCode :: Parser Char
-opCode = char '+' <|> char '-' <|> char '*' <|> char '/'
+opCodeLow :: Parser (Expression -> Expression -> Expression)
+opCodeLow = opParser Add <|> opParser Sub
+
+opCodeMed :: Parser (Expression -> Expression -> Expression)
+opCodeMed = opParser Mul <|> opParser Div
 
 var :: Parser Expression
 var = fmap Var identifier
@@ -56,5 +81,8 @@ var = fmap Var identifier
 application :: Parser Expression
 application = undefined
 
+token :: Char -> Parser Char
+token c = between spaces spaces $ char c
+
 parseFunction :: String -> Either ParseError Expression
-parseFunction = parse function "<undefined source>"
+parseFunction = parse (between spaces spaces function) "<undefined source>"
