@@ -6,14 +6,13 @@ import Control.Monad
 import Text.Read (Lexeme(Char))
 
 function :: Parser Expression
-function = do 
+function = do
     name <- identifier
     char '('
     param <- identifier
     char ')'
     char '='
-
-    fmap Var identifier
+    simpleExpr
 
 identifier :: Parser String
 -- [a-zA-Z][a-zA-Z0-9]*
@@ -21,7 +20,7 @@ identifier :: Parser String
 identifier = do
     head <- firstPart
     tail <- secondPart
-    return (head:tail) 
+    return (head:tail)
     where
         firstPart :: Parser Char
         firstPart = oneOf (['a'..'z']++['A'..'Z'])
@@ -31,61 +30,31 @@ identifier = do
 simpleExpr :: Parser Expression
 simpleExpr = binary <|> var <|> application
 
-zero = char '0'
-dig = oneOf ['1'..'9']
-
 number :: Parser Expression
 number = do
-    head :: Parser Char
-    
+    firstDigit <- head
+    followingDigits <- tail
+    return (Number (firstDigit : followingDigits))
+    where
+        head :: Parser Char
+        head = oneOf ['1'..'9']
+        tail :: Parser [Char]
+        tail = many (oneOf ['0'..'9'])
 
 binary :: Parser Expression
-binary = undefined
+binary = do
+    simpleExpr
+    opCode
+    simpleExpr
+
+opCode :: Parser Char
+opCode = char '+' <|> char '-' <|> char '*' <|> char '/'
 
 var :: Parser Expression
-var = undefined
+var = fmap Var identifier
 
 application :: Parser Expression
 application = undefined
 
 parseFunction :: String -> Either ParseError Expression
 parseFunction = parse function "<undefined source>"
-
-{-function = chainl1 exp1 opLow
- do
-    f <- function
-    op <- opLow
-    rest <- exp1
-    return (f : rest)-}
-
-{-exp1 = do
-    exp <- exp1
-    op <- opMed
-    rest <- exp2
-    return (exp : rest) <|> exp2-}
-
-{-exp2 = do
-    minus <- char '-'
-    rest <- exp3
-    return (minus : rest) <|> exp3-}
-
-{-exp3 = do
-    lparen <- char '('
-    f <- function
-    rparen <- char ')'
-    return (lparen : rparen)
-    <|> value-}
-
-{-opLow = char '+' <|> char '-'
-
-opMed = char '*' <|> char '/'
--}
-
-{-}
-number = do
-    c <- dig
-    cs <- many (dig <|> zero)
-    return (c : cs)
--- : [] = \x --> Lambda wird direkt an fmap übergeben (\x -> [x])
-value = number <|> fmap (: []) (char 'x') -}
-

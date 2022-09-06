@@ -1,9 +1,10 @@
-module AbstractSyntax(Expression(..)) where
+module AbstractSyntax(Expression(..), OpCode(..)) where
 
-data Expression = Function String Expression 
+data Expression = Function {name :: String, param :: String, expr :: Expression} 
     | Binary Expression OpCode Expression 
     | Var  String 
     | Application String [Expression]
+    | Number String
     deriving (Show, Eq)
 
 
