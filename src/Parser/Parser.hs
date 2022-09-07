@@ -12,7 +12,9 @@ function = do
     param <- identifier
     tokenParser $ char ')'
     tokenParser $ char '='
-    simpleExprLow
+    body <- simpleExprLow -- man holt Inhalt aus der Monade raus
+    return $ Function name param body
+
 
 identifier :: Parser String
 -- [a-zA-Z][a-zA-Z0-9]*
@@ -88,3 +90,26 @@ tokenParser = between spaces spaces
 
 parseFunction :: String -> Either ParseError Expression
 parseFunction = parse (between spaces spaces function) "<undefined source>"
+
+{-
+-- inputToJavaScript "f(x)=x*x"  
+-- ==> 
+            "function (x: any) {
+              return x * x;
+            }"
+
+-}
+
+compileToJS :: Expression -> String 
+compileToJS (Var name) = name 
+compileToJS (Number i) = show i
+compileToJS (Application name arguments) = name ++ "(" ++ argList ++ ")"
+    where 
+        argList = join . (intersperse "," ) $ (fmap compileToJS arguments)
+compileToJS (Binary op exp1 exp2) = (compileToJS exp1) (show op) (compileToJS exp2)
+
+inputToJavaScript :: String -> String 
+inputToJavaScript inp= do
+    funcExp <- parseFunction inp
+    paramName <- funcExp Function param 
+    "function (" ++ (param funcExp) ++ " : any) {\n\t return " ++ (compileToJS funcExp) ++ ";\n}"
