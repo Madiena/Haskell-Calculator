@@ -23,9 +23,9 @@ identifier = do
     return (head:tail)
     where
         firstPart :: Parser Char
-        firstPart = oneOf (['a'..'z']++['A'..'Z'])
+        firstPart = between spaces spaces $ oneOf (['a'..'z']++['A'..'Z'])
         secondPart :: Parser [Char]
-        secondPart = many (oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
+        secondPart = many (between spaces spaces $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
 
 --Binary Expression wird zur Simple Expression durch Konzept
 --der Präzedenzen
@@ -54,6 +54,8 @@ simpleExprHigh = number <|> var <|> do {
     return expr;
 }
 
+
+-- between spaces function reduzieren
 number :: Parser Expression
 number = do
     firstDigit <- head
@@ -61,9 +63,9 @@ number = do
     return (Number $ read (firstDigit : followingDigits))
     where
         head :: Parser Char
-        head = oneOf ['1'..'9']
+        head = between spaces spaces $ oneOf ['1'..'9']
         tail :: Parser [Char]
-        tail = many (oneOf ['0'..'9'])
+        tail = many (between spaces spaces $ oneOf ['0'..'9'])
 
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
 --fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
