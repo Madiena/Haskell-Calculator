@@ -1,6 +1,6 @@
-module Main where
+module Parser.Main where
 
-import Parser
+import Parser.Parser
 
 main :: IO()
 main = do

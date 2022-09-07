@@ -1,19 +1,18 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings, BlockArguments #-}
+--{-# LANGUAGE QuasiQuotes       #-}
 module Handler.Home where
 
 import Import
 import Data.Aeson()
 import Yesod.Core.Content()
+import Parser.Parser
 
 getHomeR :: Handler ()
 getHomeR = do sendFile typeHtml "static/index.html"
 
 newtype Function = Function {
-    function :: Text 
+    fnString :: String 
 } deriving (Show, Generic)
-getFuction :: Function -> Text 
-getFuction (Function fun) = fun 
 
 instance ToJSON Function
 instance FromJSON Function
@@ -21,10 +20,8 @@ instance FromJSON Function
 postFunctionR :: Handler Value
 postFunctionR = do
     fun <- requireInsecureJsonBody :: Handler Function
---    handleFunction fun
-    returnJson fun
+    case parseFunction (fnString fun) of
+       Left err -> returnJson $ Function "error"
+       Right expr -> returnJson $ Function (show expr)
 
---handleFunction :: Function -> Handler Value
---handleFunction f = 
-    --das ist die Funktion, in der die eingegebene Funktion an den Parser kommt und die ganze Logik passiert
-
+    --returnJson fun

@@ -1,4 +1,4 @@
-module AbstractSyntax(Expression(..), OpCode(..)) where
+module Parser.AbstractSyntax(Expression(..), OpCode(..)) where
 import Data.Functor.Contravariant (Op)
 
 data Expression = Function {name :: String, param :: String, expr :: Expression} 

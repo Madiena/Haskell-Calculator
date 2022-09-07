@@ -1,7 +1,7 @@
 
-module Parser(function, parseFunction) where
+module Parser.Parser(function, parseFunction) where
 import Text.ParserCombinators.Parsec hiding (token)
-import AbstractSyntax
+import Parser.AbstractSyntax
 import Control.Monad
 
 
