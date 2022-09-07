@@ -1,4 +1,4 @@
-module Parser.Main where
+module Main where
 
 import Parser.Parser
 
