@@ -8,10 +8,10 @@ import Control.Monad
 function :: Parser Expression
 function = do
     name <- identifier
-    token '('
+    tokenParser $ char '('
     param <- identifier
-    token ')'
-    token '='
+    tokenParser $ char ')'
+    tokenParser $ char '='
     simpleExprLow
 
 identifier :: Parser String
@@ -23,9 +23,9 @@ identifier = do
     return (head:tail)
     where
         firstPart :: Parser Char
-        firstPart = between spaces spaces $ oneOf (['a'..'z']++['A'..'Z'])
+        firstPart =  tokenParser $ oneOf (['a'..'z']++['A'..'Z'])
         secondPart :: Parser [Char]
-        secondPart = many (between spaces spaces $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
+        secondPart = many (tokenParser $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
 
 --Binary Expression wird zur Simple Expression durch Konzept
 --der Präzedenzen
@@ -41,16 +41,16 @@ simpleExprMed = chainl1 simpleExprUnary opCodeMed
 -- negation
 simpleExprUnary :: Parser Expression
 simpleExprUnary = do {
-    token '-';
+    tokenParser $ char '-';
     Binary Sub (Number 0) <$> simpleExprHigh;
 } <|> simpleExprHigh
 
 -- () | value
 simpleExprHigh :: Parser Expression
 simpleExprHigh = number <|> var <|> do {
-    token '(';
+    tokenParser $ char '(';
     expr <- simpleExprLow;
-    token ')';
+    tokenParser $ char ')';
     return expr;
 }
 
@@ -63,13 +63,13 @@ number = do
     return (Number $ read (firstDigit : followingDigits))
     where
         head :: Parser Char
-        head = between spaces spaces $ oneOf ['1'..'9']
+        head = tokenParser $ oneOf ['1'..'9']
         tail :: Parser [Char]
-        tail = many (between spaces spaces $ oneOf ['0'..'9'])
+        tail = many (tokenParser $ oneOf ['0'..'9'])
 
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
 --fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
-opParser operator = fmap (const  (Binary operator)) (token (head.show$operator))
+opParser operator = fmap (const  (Binary operator)) (tokenParser $ char (head.show$operator))
 
 opCodeLow :: Parser (Expression -> Expression -> Expression)
 opCodeLow = opParser Add <|> opParser Sub
@@ -83,8 +83,8 @@ var = fmap Var identifier
 application :: Parser Expression
 application = undefined
 
-token :: Char -> Parser Char
-token c = between spaces spaces $ char c
+tokenParser :: Parser Char -> Parser Char
+tokenParser = between spaces spaces
 
 parseFunction :: String -> Either ParseError Expression
 parseFunction = parse (between spaces spaces function) "<undefined source>"
