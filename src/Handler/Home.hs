@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric, OverloadedStrings, BlockArguments #-}
---{-# LANGUAGE QuasiQuotes       #-}
 module Handler.Home where
 
 import Import
