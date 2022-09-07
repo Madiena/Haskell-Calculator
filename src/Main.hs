@@ -7,6 +7,6 @@ main = do
     str <- getLine
     case parseFunction str of 
         Left err -> putStrLn "err"
-        Right suc -> print suc
+        Right suc -> print (compileToJS suc)
     main
         

@@ -1,8 +1,12 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use <$>" #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Parser.Parser(function, parseFunction) where
+module Parser.Parser(function, parseFunction, compileToJS) where
 import Text.ParserCombinators.Parsec hiding (token)
 import Parser.AbstractSyntax
 import Control.Monad
+import Data.List (intersperse)
 
 
 function :: Parser Expression
@@ -100,16 +104,11 @@ parseFunction = parse (between spaces spaces function) "<undefined source>"
 
 -}
 
-compileToJS :: Expression -> String 
-compileToJS (Var name) = name 
+compileToJS :: Expression -> String
+compileToJS (Function name param body) = "(function " ++ name ++ "(" ++ param ++ " : any) {return " ++ compileToJS body ++ ";})"
+compileToJS (Var name) = name
 compileToJS (Number i) = show i
 compileToJS (Application name arguments) = name ++ "(" ++ argList ++ ")"
-    where 
-        argList = join . (intersperse "," ) $ (fmap compileToJS arguments)
-compileToJS (Binary op exp1 exp2) = (compileToJS exp1) (show op) (compileToJS exp2)
-
-inputToJavaScript :: String -> String 
-inputToJavaScript inp= do
-    funcExp <- parseFunction inp
-    paramName <- funcExp Function param 
-    "function (" ++ (param funcExp) ++ " : any) {\n\t return " ++ (compileToJS funcExp) ++ ";\n}"
+    where
+    argList = join . intersperse "," $ fmap compileToJS arguments
+compileToJS (Binary op exp1 exp2) = compileToJS exp1 ++ show op ++ compileToJS exp2
