@@ -2,22 +2,37 @@
 {-# HLINT ignore "Use <$>" #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Parser.Parser(function, parseFunction, compileToJS) where
+module Parser.Parser(functionDef, parseFunction, compileToJS) where
 import Text.ParserCombinators.Parsec hiding (token)
 import Parser.AbstractSyntax
 import Control.Monad
-import Data.List (intersperse)
+import Data.List 
+
+--chain :: Parser a -> Parser (a -> b -> b) -> Parser b
 
 
-function :: Parser Expression
-function = do
+functionDef :: Parser Definition
+functionDef = do
     name <- identifier
-    tokenParser $ char '('
-    param <- identifier
-    tokenParser $ char ')'
-    tokenParser $ char '='
+    token '('
+    params <- sepBy1 identifier (char ',') -- chainl1 (fmap return identifier) (char ',' >> return (++))     -- ToDo: merhrere Parameter erkennen können-- f(x) = x*x,    f(x,y)=x+y, 
+    token ')'
+    token '='
     body <- simpleExprLow -- man holt Inhalt aus der Monade raus
-    return $ Function name param body
+    return $ FunctionDef name params body
+
+--parameterErkennung :: Parser [String] -> Parser [String]
+{-
+parameterErkennung oldParamList = do
+    let neueParamListe <- (fmap (\ident ->  ident : oldParamList)   identifier)
+    char ','  -- versuche ein ',' zu erkennen
+    parameterErkennung neueParamListe
+    --parameterErkennung  (fmap (\ident ->  ident : oldParamList)   identifier)
+-}
+
+
+
+    
 
 
 identifier :: Parser String
@@ -47,18 +62,18 @@ simpleExprMed = chainl1 simpleExprUnary opCodeMed
 -- negation
 simpleExprUnary :: Parser Expression
 simpleExprUnary = do {
-    tokenParser $ char '-';
+    token '-';
     Binary Sub (Number 0) <$> simpleExprHigh;
 } <|> simpleExprHigh
 
 -- () | value
 simpleExprHigh :: Parser Expression
-simpleExprHigh = number <|> var <|> do {
-    tokenParser $ char '(';
+simpleExprHigh = number <|>  try application <|> var <|>  do {
+    token '(';
     expr <- simpleExprLow;
-    tokenParser $ char ')';
+    token ')';
     return expr;
-}
+}  
 
 
 -- between spaces function reduzieren
@@ -86,14 +101,24 @@ opCodeMed = opParser Mul <|> opParser Div
 var :: Parser Expression
 var = fmap Var identifier
 
+-- f(Expression)   ; f(x-1)
 application :: Parser Expression
-application = undefined
+application = do 
+    functionName <- identifier
+    token '('
+    argument <- simpleExprLow
+    token ')'
+    return $ Application functionName [argument]
+
 
 tokenParser :: Parser Char -> Parser Char
 tokenParser = between spaces spaces
 
-parseFunction :: String -> Either ParseError Expression
-parseFunction = parse (between spaces spaces function) "<undefined source>"
+token ::  Char -> Parser ()
+token c = void (tokenParser $ char c)
+
+parseFunction :: String -> Either ParseError Definition
+parseFunction = parse (between spaces spaces functionDef) "Problem beim Parser"
 
 {-
 -- inputToJavaScript "f(x)=x*x"  
@@ -104,11 +129,19 @@ parseFunction = parse (between spaces spaces function) "<undefined source>"
 
 -}
 
-compileToJS :: Expression -> String
-compileToJS (Function name param body) = "(function " ++ name ++ "(" ++ param ++ " : any) {return " ++ compileToJS body ++ ";})"
-compileToJS (Var name) = name
-compileToJS (Number i) = show i
-compileToJS (Application name arguments) = name ++ "(" ++ argList ++ ")"
+
+
+
+compileToJS :: Definition -> String
+compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ (intercalate ":any, ") params ++ ":any) {return " ++ compileExpToJS body ++ ";}"
+
+compileExpToJS :: Expression -> String
+compileExpToJS (Var name) = name
+compileExpToJS (Number i) = show i
+compileExpToJS (Application name arguments) = name ++ "(" ++ argList ++ ")"
     where
-    argList = join . intersperse "," $ fmap compileToJS arguments
-compileToJS (Binary op exp1 exp2) = compileToJS exp1 ++ show op ++ compileToJS exp2
+    argList = join . intersperse "," $ fmap compileExpToJS arguments
+compileExpToJS (Binary op exp1 exp2) = "(" ++ compileExpToJS exp1 ++ show op ++ compileExpToJS exp2 ++ ")"
+
+
+

@@ -1,12 +1,41 @@
-module Parser.AbstractSyntax(Expression(..), OpCode(..)) where
+module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..)) where
 import Data.Functor.Contravariant (Op)
 
-data Expression = Function {name :: String, param :: String, expr :: Expression} 
-    | Binary OpCode Expression Expression
-    | Var  String 
+{-
+data Expr argumentType = 
+      Var String 
+    | Application String [argumentType]
+    deriving (Show, Eq)
+
+type LExpr = Expr LExpr 
+data RExpr = RExpr (Expr RExpr) | Number Integer | Binary OpCode RExpression RExpression
+-}
+
+--name (Var n) = n
+-- type MyInt = Int <- findet nur auf der Typebene statt
+-- data definiert einen neuen Typen
+
+--data Definition = Definition LExpression RExpression -- f(x) = 4; x = 5;  in Version 2: a[i] = 8;
+data Definition = FunctionDef {funcName :: String , funcParams :: [String], funcBody :: Expression} 
+                | VariableDef String Expression
+
+--data LExpression = LVar String | LApplication {name :: String, param :: [String]}
+
+data Expression = -- Function {name :: String, param :: String, expr :: Expression} 
+      Binary OpCode Expression Expression -- functionApplication 
+    | Var String 
     | Application String [Expression]
     | Number Integer
     deriving (Show, Eq)
+
+{-
+data RExpression = -- Function {name :: String, param :: String, expr :: Expression} 
+      Binary OpCode RExpression RExpression -- functionApplication 
+    | RVar String 
+    | RApplication String [RExpression]
+    | Number Integer
+    deriving (Show, Eq)
+-}
 
 --Konstruktor für data wie anwenden?
 data OpCode = Add | Sub | Mul | Div deriving (Eq)
