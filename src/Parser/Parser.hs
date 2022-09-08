@@ -133,7 +133,7 @@ parseFunction = parse (between spaces spaces functionDef) "Problem beim Parser"
 
 
 compileToJS :: Definition -> String
-compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ (intercalate ":any, ") params ++ ":any) {return " ++ compileExpToJS body ++ ";}"
+compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ (intercalate ", ") params ++ ") {return " ++ compileExpToJS body ++ ";}"
 
 compileExpToJS :: Expression -> String
 compileExpToJS (Var name) = name
