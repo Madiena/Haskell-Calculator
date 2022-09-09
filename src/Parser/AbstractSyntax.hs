@@ -28,6 +28,15 @@ data Expression = -- Function {name :: String, param :: String, expr :: Expressi
     | Number Integer
     deriving (Show, Eq)
 
+calculate :: (OpCode -> Int) -> Expression -> Int
+calculate op (Binary _ opLeft opRight) = operator op opLeft opRight
+
+operator :: OpCode -> Int
+operator Add = (+)
+operator Sub = (-)
+operator Mul = (*)
+operator Div = (/)
+
 {-
 data RExpression = -- Function {name :: String, param :: String, expr :: Expression} 
       Binary OpCode RExpression RExpression -- functionApplication 
