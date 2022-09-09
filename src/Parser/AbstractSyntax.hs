@@ -25,13 +25,17 @@ data Expression = -- Function {name :: String, param :: String, expr :: Expressi
       Binary OpCode Expression Expression -- functionApplication 
     | Var String 
     | Application String [Expression]
-    | Number Integer
+    | Number Double
     deriving (Show, Eq)
 
-calculate :: (OpCode -> Int) -> Expression -> Int
-calculate op (Binary _ opLeft opRight) = operator op opLeft opRight
+calculate :: Expression -> Double
+calculate (Binary op opLeft opRight) = (operator op) (calculate opLeft) (calculate opRight)
+calculate (Number d) = d
+calculate _ = undefined
 
-operator :: OpCode -> Int
+
+
+operator :: OpCode -> Double -> Double -> Double
 operator Add = (+)
 operator Sub = (-)
 operator Mul = (*)
