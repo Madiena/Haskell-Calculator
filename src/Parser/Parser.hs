@@ -84,7 +84,7 @@ number = do
     return (Number $ read (firstDigit : followingDigits))
     where
         head :: Parser Char
-        head = tokenParser $ oneOf ['1'..'9']
+        head = tokenParser $ oneOf ['0'..'9']
         tail :: Parser [Char]
         tail = many (tokenParser $ oneOf ['0'..'9'])
 
