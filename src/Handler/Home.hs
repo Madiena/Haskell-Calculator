@@ -22,5 +22,3 @@ postFunctionR = do
     case parseFunction (fnString fun) of
        Left err -> returnJson $ Function "error"
        Right expr -> returnJson $ Function (compileToJS expr)
-
-    --returnJson fun
