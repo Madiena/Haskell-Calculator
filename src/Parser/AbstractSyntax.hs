@@ -1,4 +1,4 @@
-module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate, returnExpressionFromDef) where
+module AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate, returnExpressionFromDef) where
 import Data.Functor.Contravariant (Op)
 import Parser.ZeroCrossings
 
