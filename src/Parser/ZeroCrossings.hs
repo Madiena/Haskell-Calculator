@@ -1,4 +1,4 @@
-module Parser.ZeroCrossings where
+module Parser.ZeroCrossings (calculateZeroPoints) where
 
 import AbstractSyntax
 import Data.List (sortOn)
