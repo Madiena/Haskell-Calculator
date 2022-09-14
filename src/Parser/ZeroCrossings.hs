@@ -1,7 +1,6 @@
-module Parser.ZeroCrossings (calculateZeroPoints) where
+module Parser.ZeroCrossings(replaceIdentifierInExpression, calculateZeroPoints) where
 
-import AbstractSyntax
-import Data.List (sortOn)
+import Parser.AbstractSyntax
 
 replaceIdentifierInExpression :: Expression -> Double -> Expression
 replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)
