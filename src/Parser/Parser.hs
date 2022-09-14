@@ -7,6 +7,7 @@ import Text.ParserCombinators.Parsec hiding (token)
 import Parser.AbstractSyntax
 import Control.Monad
 import Data.List 
+import Text.Read (Lexeme(String))
 
 --chain :: Parser a -> Parser (a -> b -> b) -> Parser b
 
@@ -78,7 +79,22 @@ simpleExprHigh = number <|>  try application <|> var <|>  do {
 
 -- between spaces function reduzieren
 number :: Parser Expression
-number = do
+number = do -- 123.456
+    iP <- try integralPart <|> return "0"
+    fP <- try fractionalPart <|> return "0"
+    return (Number $ read (iP ++ ['.'] ++ fP)) -- 5.0
+    where 
+        integralPart :: Parser String
+        integralPart = integer
+        fractionalPart :: Parser String  -- '.' 
+        fractionalPart = (char '.' <|> char ',') >> many1 ( oneOf ['0'..'9'])
+    
+
+integer :: Parser String
+integer = (many (tokenParser $ oneOf ['0'..'9']))
+
+    {-
+    do
     firstDigit <- head
     followingDigits <- tail
     return (Number $ read (firstDigit : followingDigits))
@@ -87,7 +103,7 @@ number = do
         head = tokenParser $ oneOf ['0'..'9']
         tail :: Parser [Char]
         tail = many (tokenParser $ oneOf ['0'..'9'])
-
+-}
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
 --fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
 opParser operator = fmap (const  (Binary operator)) (tokenParser $ char (head.show$operator))
