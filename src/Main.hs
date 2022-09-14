@@ -2,6 +2,7 @@ module Main where
 
 import Parser.Parser
 import Parser.AbstractSyntax
+import Parser.ZeroCrossings
 
 main :: IO()
 main = do

@@ -1,6 +1,6 @@
-module Parser.ZeroCrossings where
+module Parser.ZeroCrossings(replaceIdentifierInExpression) where
 
-import AbstractSyntax
+import Parser.AbstractSyntax
 
 replaceIdentifierInExpression :: Expression -> Double -> Expression
 replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)

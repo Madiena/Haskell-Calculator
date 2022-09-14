@@ -1,5 +1,6 @@
 module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate, returnExpressionFromDef) where
 import Data.Functor.Contravariant (Op)
+import Parser.ZeroCrossings
 
 {-
 data Expr argumentType = 
@@ -35,10 +36,8 @@ returnExpressionFromDef (FunctionDef { funcBody = funcBody }) = funcBody
 calculate :: Expression -> Double
 calculate (Binary op opLeft opRight) = (operator op) (calculate opLeft) (calculate opRight)
 calculate (Number d) = d
-calculate (Var v) = v
+calculate (Var v) = replaceIdentifierInExpression v
 calculate _ = undefined
-
-
 
 operator :: OpCode -> Double -> Double -> Double
 operator Add = (+)

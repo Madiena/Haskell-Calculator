@@ -78,7 +78,8 @@ simpleExprHigh = number <|>  try application <|> var <|>  do {
 
 -- between spaces function reduzieren
 number :: Parser Expression
-number = do
+number = fmap (Number tokenParser $ oneOf ['0' .. '9'])
+{-number = (do
     firstDigit <- head
     followingDigits <- tail
     return (Number $ read (firstDigit : followingDigits))
@@ -86,7 +87,8 @@ number = do
         head :: Parser Char
         head = tokenParser $ oneOf ['0'..'9']
         tail :: Parser [Char]
-        tail = many (tokenParser $ oneOf ['0'..'9'])
+        tail = many (tokenParser $ oneOf ['0'..'9']))
+<|> tokenParser $ char '0'-}
 
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
 --fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
