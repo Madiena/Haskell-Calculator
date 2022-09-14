@@ -1,4 +1,4 @@
-module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate) where
+module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate, returnExpressionFromDef) where
 import Data.Functor.Contravariant (Op)
 
 {-
@@ -29,7 +29,8 @@ data Expression = -- Function {name :: String, param :: String, expr :: Expressi
     deriving (Show, Eq)
 
 returnExpressionFromDef :: Definition -> Expression
-returnExpressionFromDef (FunctionDef { funcBody }) = funcBody  
+-- returnExpressionFromDef (def :: FunctionDef) = funcBody def
+returnExpressionFromDef (FunctionDef { funcBody = funcBody }) = funcBody  
 
 calculate :: Expression -> Double
 calculate (Binary op opLeft opRight) = (operator op) (calculate opLeft) (calculate opRight)
