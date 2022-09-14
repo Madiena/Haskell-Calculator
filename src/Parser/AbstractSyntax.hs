@@ -1,6 +1,6 @@
-module AbstractSyntax(Expression(..), OpCode(..), Definition(..), calculate, returnExpressionFromDef) where
+module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..)) where
 import Data.Functor.Contravariant (Op)
-import Parser.ZeroCrossings
+--import Parser.Parser
 
 {-
 data Expr argumentType = 
@@ -29,21 +29,6 @@ data Expression = -- Function {name :: String, param :: String, expr :: Expressi
     | Number Double
     deriving (Show, Eq)
 
-returnExpressionFromDef :: Definition -> Expression
--- returnExpressionFromDef (def :: FunctionDef) = funcBody def
-returnExpressionFromDef (FunctionDef { funcBody = funcBody }) = funcBody  
-
-calculate :: Expression -> Double
-calculate (Binary op opLeft opRight) = (operator op) (calculate opLeft) (calculate opRight)
-calculate (Number d) = d
-calculate (Var v) = replaceIdentifierInExpression v
-calculate _ = undefined
-
-operator :: OpCode -> Double -> Double -> Double
-operator Add = (+)
-operator Sub = (-)
-operator Mul = (*)
-operator Div = (/)
 
 {-
 data RExpression = -- Function {name :: String, param :: String, expr :: Expression} 
