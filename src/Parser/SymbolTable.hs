@@ -6,8 +6,8 @@ data SymbolTable = SymbolTable [(String, Definition)] deriving Show
          --   a        VariableDef( BinaryExpr (Var h) + 1)
          --   f        FunctionDef(f, [x], BinaryExpr (Var a) + x)    
 
---storeDefinition :: Definition -> SymbolTable
---storeDefinition (FunctionDef name params body) =  SymbolTable (fmap const (name, FunctionDef))
---storeDefinition (VariableDef name body) = SymbolTable (fmap const (name, VariableDef))
+storeDefinition :: Definition -> SymbolTable
+storeDefinition (FunctionDef name params body) =  SymbolTable [(name, (FunctionDef name params body))]
+storeDefinition (VariableDef name body) = SymbolTable [(name, (VariableDef name body))]
     
     
