@@ -10,6 +10,6 @@ main = do
         Left err -> putStrLn (show err)
         Right suc ->
             print (compileToJS suc)
-            >> print (calculate (returnExpressionFromDef suc)) 
+            -- >> print (calculate (returnExpressionFromDef suc)) 
             -- >> print (calculateZeroPoints $ returnExpressionFromDef suc)
     main

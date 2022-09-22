@@ -44,10 +44,12 @@ identifier = do
     tail <- secondPart
     return (head:tail)
     where
+        --Möglichkeit ln als identifier zu nutzen muss verhindert sein
+
         firstPart :: Parser Char
         firstPart =  tokenParser $ oneOf (['a'..'z']++['A'..'Z'])
         secondPart :: Parser [Char]
-        secondPart = {-many (noneOf "ln") >> -}many (tokenParser $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
+        secondPart = many (tokenParser $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
 
 --Binary Expression wird zur Simple Expression durch Konzept
 --der Präzedenzen
@@ -64,21 +66,16 @@ simpleExprMed = chainl1 simpleExprMediHigh opCodeMed
 simpleExprMediHigh :: Parser Expression
 simpleExprMediHigh = chainl1 simpleExprUnary opCodeMediHigh
 
--- negation | ln (Logarithm with base e) note that syntax is: lnx, not ln(x)
+-- negation 
 simpleExprUnary :: Parser Expression
 simpleExprUnary = do {
     token '-';
     Binary Sub (Number 0) <$> simpleExprHigh;
-} <|> do {
-      token 'l';
-      token 'n';
-      Binary Sub (Number 0) <$> simpleExprHigh;
-}
-  <|> simpleExprHigh
+} <|> simpleExprHigh
 
 -- () | value
 simpleExprHigh :: Parser Expression
-simpleExprHigh =  try var <|> application <|>  do {
+simpleExprHigh = try application <|> try var <|>  do {
     token '(';
     expr <- simpleExprLow;
     token ')';

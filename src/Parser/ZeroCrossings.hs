@@ -54,6 +54,7 @@ calculate :: Expression -> Double
 calculate (Binary op opLeft opRight) = (operator op (calculate opLeft) (calculate opRight))
 calculate (Number d) = d 
 --calculate (Var v) = -- replaceIdentifierInExpression v  --  f(x) = x*x + 2*x   5      
+calculate (Var v) = replaceVar
 calculate _ = undefined
 
 operator :: OpCode -> Double -> Double -> Double
