@@ -11,7 +11,7 @@ import Data.List
 
 --chain :: Parser a -> Parser (a -> b -> b) -> Parser b
 
-
+-- e.g.: f(x) = a * b
 functionDef :: Parser Definition
 functionDef = do
     name <- identifier
@@ -31,10 +31,13 @@ parameterErkennung oldParamList = do
     --parameterErkennung  (fmap (\ident ->  ident : oldParamList)   identifier)
 -}
 
-
-
-    
-
+-- e.g.: h = 5
+varDef :: Parser Definition
+varDef = do
+    name <- identifier
+    token '='
+    value <- number
+    return $ VariableDef name value
 
 identifier :: Parser String
 -- [a-zA-Z][a-zA-Z0-9]*
