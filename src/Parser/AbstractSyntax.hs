@@ -40,13 +40,15 @@ data RExpression = -- Function {name :: String, param :: String, expr :: Express
 -}
 
 --Konstruktor für data wie anwenden?
-data OpCode = Add | Sub | Mul | Div deriving (Eq)
+data OpCode = Add | Sub | Mul | Div | Pow | Log deriving (Eq)
 
 instance Show OpCode where
     show Add = "+"
     show Sub = "-"
     show Mul = "*"
     show Div = "/"
+    show Pow = "^"
+    show Log = "ln"
 
 {-instance Show a => Show (Expression a) where
 show (Function ident expr) = "Function(" ++ Prelude.show ident ++ ") = (" ++ AbstractSyntax.show expr ++ ")"

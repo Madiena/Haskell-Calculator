@@ -2,6 +2,7 @@ module Parser.ZeroCrossings(replaceIdentifierInExpression, calculateZeroPoints, 
 
 import Parser.AbstractSyntax
 import Data.List (sortOn)
+import Text.ParserCombinators.Parsec
 
 replaceIdentifierInExpression :: Expression -> Double -> Expression
 replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)
@@ -21,9 +22,37 @@ returnExpressionFromDef :: Definition -> Expression
 -- returnExpressionFromDef (def :: FunctionDef) = funcBody def
 returnExpressionFromDef (FunctionDef { funcBody = funcBody }) = funcBody  
 
+-- Unterscheidung zwischen Division durch 0 und anderen Operationen funktioniert!
+-- Möglichkeit ParseError oder Ähnliches abzubilden fehlt -
+-- benötigt um MathError bei der Division durch 0 darzustellen
+-- Folgender Versuch funktioniert nicht:
+
+{- calculate :: Expression -> Either ParseError Double
+calculate (Binary op opLeft opRight) = do
+    if op == Div && opRight == Number 0 
+     then Left err <- "Math Error: Division by Zero is not allowed" :: ParseError
+     else Right res <- (operator op (calculate opLeft) (calculate opRight))
+calculate (Number d) = d 
+--calculate (Var v) = -- replaceIdentifierInExpression v  --  f(x) = x*x + 2*x   5      
+calculate _ = undefined
+-}
+
+-- Möglichkeit Division durch 0 ohne sinnvollen Output zu testen.
+-- Ergebnis hierbei immer 2.0
+
+{- calculate :: Expression -> Double
+calculate (Binary op opLeft opRight) = do
+    if op == Div && opRight == Number 0 
+     then 1 + 1
+     else (operator op (calculate opLeft) (calculate opRight))
+calculate (Number d) = d 
+--calculate (Var v) = -- replaceIdentifierInExpression v  --  f(x) = x*x + 2*x   5      
+calculate _ = undefined
+-}
+
 calculate :: Expression -> Double
-calculate (Binary op opLeft opRight) = operator op (calculate opLeft) (calculate opRight)
-calculate (Number d) = d
+calculate (Binary op opLeft opRight) = (operator op (calculate opLeft) (calculate opRight))
+calculate (Number d) = d 
 --calculate (Var v) = -- replaceIdentifierInExpression v  --  f(x) = x*x + 2*x   5      
 calculate _ = undefined
 
@@ -32,4 +61,8 @@ operator Add = (+)
 operator Sub = (-)
 operator Mul = (*)
 operator Div = (/)
+operator Pow = (**)
+
+--division :: OpCode -> Double -> Double -> Double
+--division Div = (/)
 

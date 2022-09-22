@@ -47,7 +47,7 @@ identifier = do
         firstPart :: Parser Char
         firstPart =  tokenParser $ oneOf (['a'..'z']++['A'..'Z'])
         secondPart :: Parser [Char]
-        secondPart = many (tokenParser $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
+        secondPart = {-many (noneOf "ln") >> -}many (tokenParser $ oneOf (['a'..'z']++['A'..'Z']++['0'..'9']))
 
 --Binary Expression wird zur Simple Expression durch Konzept
 --der Präzedenzen
@@ -58,18 +58,27 @@ simpleExprLow = chainl1 simpleExprMed opCodeLow
 
 -- * & /
 simpleExprMed :: Parser Expression
-simpleExprMed = chainl1 simpleExprUnary opCodeMed
+simpleExprMed = chainl1 simpleExprMediHigh opCodeMed
 
--- negation
+-- ^ (Power)
+simpleExprMediHigh :: Parser Expression
+simpleExprMediHigh = chainl1 simpleExprUnary opCodeMediHigh
+
+-- negation | ln (Logarithm with base e) note that syntax is: lnx, not ln(x)
 simpleExprUnary :: Parser Expression
 simpleExprUnary = do {
     token '-';
     Binary Sub (Number 0) <$> simpleExprHigh;
-} <|> simpleExprHigh
+} <|> do {
+      token 'l';
+      token 'n';
+      Binary Sub (Number 0) <$> simpleExprHigh;
+}
+  <|> simpleExprHigh
 
 -- () | value
 simpleExprHigh :: Parser Expression
-simpleExprHigh = try application <|> try var <|>  do {
+simpleExprHigh =  try var <|> application <|>  do {
     token '(';
     expr <- simpleExprLow;
     token ')';
@@ -125,6 +134,9 @@ opCodeLow = opParser Add <|> opParser Sub
 
 opCodeMed :: Parser (Expression -> Expression -> Expression)
 opCodeMed = opParser Mul <|> opParser Div
+
+opCodeMediHigh :: Parser (Expression -> Expression -> Expression)
+opCodeMediHigh = opParser Pow
 
 var :: Parser Expression
 var = fmap Var identifier
