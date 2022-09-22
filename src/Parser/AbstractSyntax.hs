@@ -18,7 +18,7 @@ data RExpr = RExpr (Expr RExpr) | Number Integer | Binary OpCode RExpression REx
 
 --data Definition = Definition LExpression RExpression -- f(x) = 4; x = 5;  in Version 2: a[i] = 8;
 data Definition = FunctionDef {funcName :: String , funcParams :: [String], funcBody :: Expression} 
-                | VariableDef String Expression
+                | VariableDef String Expression deriving (Show)
 
 --data LExpression = LVar String | LApplication {name :: String, param :: [String]}
 

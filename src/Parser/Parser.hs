@@ -36,7 +36,7 @@ varDef :: Parser Definition
 varDef = do
     name <- identifier
     token '='
-    value <- number
+    value <- simpleExprLow
     return $ VariableDef name value
 
 identifier :: Parser String
@@ -158,7 +158,7 @@ token ::  Char -> Parser ()
 token c = void (tokenParser $ char c)
 
 parseFunction :: String -> Either ParseError Definition
-parseFunction = parse (between spaces spaces functionDef) "Problem beim Parser"
+parseFunction = parse (between spaces spaces (try functionDef <|> varDef)) "Problem beim Parser"
 
 {-
 -- inputToJavaScript "f(x)=x*x"  
@@ -174,6 +174,7 @@ parseFunction = parse (between spaces spaces functionDef) "Problem beim Parser"
 
 compileToJS :: Definition -> String
 compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ (intercalate ", ") params ++ ") {return " ++ compileExpToJS body ++ ";}"
+compileToJS (VariableDef name body) = "variable " ++ name ++ " = " ++ show body
 
 compileExpToJS :: Expression -> String
 compileExpToJS (Var name) = name
