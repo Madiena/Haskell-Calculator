@@ -1,7 +1,7 @@
 module Parser.SymbolTable where
 import Parser.AbstractSyntax
 
-data SymbolTable = SymbolTable [(String, Definition)] deriving Show
+{-data SymbolTable = SymbolTable [(String, Definition)] deriving Show
          --   h        VariableDef( Number 41)
          --   a        VariableDef( BinaryExpr (Var h) + 1)
          --   f        FunctionDef(f, [x], BinaryExpr (Var a) + x)    
@@ -11,4 +11,4 @@ storeDefinition (FunctionDef name params body) =  SymbolTable [(name, (FunctionD
 storeDefinition (VariableDef name body) = SymbolTable [(name, (VariableDef name body))]
     
 addNewDefToStoredList :: Definition -> SymbolTable -> SymbolTable
-addNewDefToStoredList newDef SymbolTable [(name, oldDef)] = SymbolTable [((name, oldDef): (storeDefinition newDef))]
+addNewDefToStoredList newDef SymbolTable [(name, oldDef)] = SymbolTable [((name, oldDef): (storeDefinition newDef))]-}

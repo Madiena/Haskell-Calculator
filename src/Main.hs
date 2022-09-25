@@ -11,7 +11,7 @@ main = do
         Left err -> putStrLn (show err)
         Right suc ->
             print (compileToJS suc)
-            >> print (storeDefinition suc)
+            -- >> print (storeDefinition suc)
             -- >> print (calculate (returnExpressionFromDef suc)) 
-            -- >> print (calculateZeroPoints $ returnExpressionFromDef suc)
+            >> print (calculateZeroPoints $ returnExpressionFromDef suc)
     main

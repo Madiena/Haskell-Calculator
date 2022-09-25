@@ -12,11 +12,15 @@ replaceIdentifierInExpression (Var name) x = Number x
 tryZeroPoints :: Expression -> [Double] -> [(Double, Double)]
 tryZeroPoints ex li = [(d, calculate (replaceIdentifierInExpression ex d)) | d <- li]
 
-findClosest :: [(Double, Double)] -> Double
-findClosest li = fst $ head $ sortOn snd [(fst d, abs (snd d)) | d <- li]
+findClosest :: [(Double, Double)] -> [(Double, Double)]
+findClosest li = filter ((< 0.00000001) . snd ) [(fst d, abs (snd d)) | d <- li]
+--findClosest li = sortOn snd [(fst d, abs (snd d)) | d <- li]
 
-calculateZeroPoints :: Expression -> Double
-calculateZeroPoints ex = findClosest $ tryZeroPoints ex [-10.0,9.991..10.0 ]
+
+
+calculateZeroPoints :: Expression -> [(Double, Double)]
+calculateZeroPoints ex = findClosest $ tryZeroPoints ex [-10.0,-9.999..10.0 ]
+--calculateZeroPoints ex = sortOn snd $ tryZeroPoints ex [-10.0,-9.9..10.0 ]
 
 returnExpressionFromDef :: Definition -> Expression
 -- returnExpressionFromDef (def :: FunctionDef) = funcBody def
