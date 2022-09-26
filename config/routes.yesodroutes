@@ -5,5 +5,6 @@
 
 /function FunctionR POST
 
+/zeropoints ZeroR POST
 
 /static StaticR Static appStatic
