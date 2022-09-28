@@ -182,7 +182,10 @@ compileExpToJS (Number i) = show i
 compileExpToJS (Application name arguments) = name ++ "(" ++ argList ++ ")"
     where
     argList = join . intersperse "," $ fmap compileExpToJS arguments
-compileExpToJS (Binary op exp1 exp2) = "(" ++ compileExpToJS exp1 ++ show op ++ compileExpToJS exp2 ++ ")"
+compileExpToJS (Binary op exp1 exp2) = if op == Pow
+    -- (Math.pow(2, 3)) == 2^3
+    then "(" ++ "Math.pow(" ++ compileExpToJS exp1 ++ "," ++ compileExpToJS exp2 ++ "))"
+    else "(" ++ compileExpToJS exp1 ++ show op ++ compileExpToJS exp2 ++ ")"
 
 
 
