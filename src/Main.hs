@@ -9,7 +9,7 @@ main = do
     str <- getLine
     case parseFunction str of 
         Left err -> putStrLn (show err)
-        Right suc ->
+        Right suc -> 
             print (compileToJS suc)
             -- >> print (storeDefinition suc)
             -- >> print (calculate (returnExpressionFromDef suc)) 
