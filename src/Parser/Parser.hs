@@ -174,7 +174,7 @@ parseFunction = parse (between spaces spaces (try functionDef <|> varDef)) "Prob
 
 compileToJS :: Definition -> String
 compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ (intercalate ", ") params ++ ") {return " ++ compileExpToJS body ++ ";}"
-compileToJS (VariableDef name body) = "variable " ++ name ++ " = " ++ show body
+compileToJS (VariableDef name body) = "variable " ++ name ++ " = " ++ compileExpToJS body
 
 compileExpToJS :: Expression -> String
 compileExpToJS (Var name) = name
