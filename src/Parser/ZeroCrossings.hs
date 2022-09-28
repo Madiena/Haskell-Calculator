@@ -38,7 +38,8 @@ calculateZeroPoints ex = mapTupleToFirstString $ findCloseToZero $ tryZeroPoints
 
 returnExpressionFromDef :: Definition -> Expression
 -- returnExpressionFromDef (def :: FunctionDef) = funcBody def
-returnExpressionFromDef FunctionDef { funcBody = funcBody } = funcBody  
+returnExpressionFromDef FunctionDef { funcBody = funcBody } = funcBody
+returnExpressionFromDef VariableDef { variable = expr } = expr
 
 -- Unterscheidung zwischen Division durch 0 und anderen Operationen funktioniert!
 -- Möglichkeit ParseError oder Ähnliches abzubilden fehlt -
