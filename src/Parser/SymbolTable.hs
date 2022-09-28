@@ -5,7 +5,8 @@ import Parser.AbstractSyntax
          --   h        VariableDef( Number 41)
          --   a        VariableDef( BinaryExpr (Var h) + 1)
          --   f        FunctionDef(f, [x], BinaryExpr (Var a) + x)    
-type SymbolTable =  [(String, Definition)] 
+type Entry = (String, Definition)
+type SymbolTable =  [Entry] 
 
 storeDefinition :: Definition -> SymbolTable
 storeDefinition (FunctionDef name params body) =  [(name, (FunctionDef name params body))]
@@ -20,9 +21,9 @@ addNewDefToStoredList name newDef symbolTable = symbolTable ++ [(name, newDef)]
 
 {-
 
-aNDL VariableDef( Number 41) [("a", Number 5),("b", 6),("c", 7)]
+addNewDefToStoredList VariableDef( Number 41) [("a", Number 5),("b", 6),("c", 7)]
 
-[ (VariableDef( Number 41) ),("a", Number 5),("b", 6),("c", 7)]
+==>  [ (VariableDef( Number 41) ),("a", Number 5),("b", 6),("c", 7)]
 -}
 
 
