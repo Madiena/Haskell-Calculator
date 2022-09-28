@@ -12,6 +12,6 @@ main = do
         Right suc -> 
             print (compileToJS suc)
             -- >> print (storeDefinition suc)
-            -- >> print (calculate (returnExpressionFromDef suc)) 
+            >> print (calculate (returnExpressionFromDef suc)) 
             >> print (calculateZeroPoints $ returnExpressionFromDef suc)
     main
