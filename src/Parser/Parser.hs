@@ -11,11 +11,11 @@ import Data.List
 
 --chain :: Parser a -> Parser (a -> b -> b) -> Parser b
 
--- e.g.: f(x) = a * b
+-- e.g.: f(x) = x * x
 functionDef :: Parser Definition
 functionDef = do
     name <- identifier
-    token '('
+    token '(' 
     params <- sepBy1 identifier (char ',') -- chainl1 (fmap return identifier) (char ',' >> return (++))     -- ToDo: merhrere Parameter erkennen können-- f(x) = x*x,    f(x,y)=x+y, 
     token ')'
     token '='
@@ -91,7 +91,7 @@ number = do
     -- x    0.0
     iP <- try integralPart <|> return "0"
     fP <- try fractionalPart <|> return "0"
-    return (Number $ (read (iP ++ ['.'] ++ fP) :: Double) ) 
+    return (Number  (read (iP ++ ['.'] ++ fP) :: Double ) ) 
     where
         integralPart :: Parser String
         integralPart = integer
