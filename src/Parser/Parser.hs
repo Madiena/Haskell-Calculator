@@ -2,7 +2,7 @@
 {-# HLINT ignore "Use <$>" #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Parser.Parser(functionDef, parseFunction, parseReplInput) where
+module Parser.Parser(functionDef, parseDefinition, parseReplInput) where
 import Text.ParserCombinators.Parsec
     ( char,
       oneOf,
