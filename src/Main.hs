@@ -14,6 +14,10 @@ import Parser.SymbolTable
     storeDefinition,
   )
 
+--------------------------------------------------------------------------------------------------------------------
+
+-- MAIN
+
 main :: IO ()
 main = do
   repl ([] :: SymbolTable)

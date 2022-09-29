@@ -6,6 +6,10 @@ import Parser.Calculation ( calculateExp )
 import Parser.Parser ( simpleExprLow , parseDefinition)
 import Text.ParserCombinators.Parsec ( parse )
 
+--------------------------------------------------------------------------------------------------------------------
+
+-- REPL
+
 {-
     Ein REPL Input besteht entweder aus einer Definition oder einer Expression
 -}
@@ -18,7 +22,11 @@ instance Show ReplInput where
     show (Def d)  = show d 
     show (Exp exp1) = show exp1
 
-    
+{-
+    Parst eine Funktionsdefinition oder Variablendefinition um sie als Eingabe an die REPL weiterzureichen,
+    sofern die Eingabe valide ist.
+    Ist die Eingabe invalide, wird eine Fehlernachricht ausgegeben.
+-}
 parseReplInput :: String -> Either String ReplInput
 parseReplInput input = do 
     case parseDefinition input of
@@ -27,6 +35,9 @@ parseReplInput input = do
             Right exp_parseReplInput -> Right $ Exp exp_parseReplInput
             Left error2 -> Left $ show error1 ++ " : " ++ show error2
 
+{-
+    REPL in einer Endlos-Schleife, die sämtliche Funktionalität des Rechners abbildet (mit Ausnahme der Grafikausgabe)
+-}
 repl :: SymbolTable -> IO ()
 repl table = do
   input <- getLine
