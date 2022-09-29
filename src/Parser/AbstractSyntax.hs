@@ -1,7 +1,7 @@
 module Parser.AbstractSyntax(Expression(..), OpCode(..), Definition(..)) where
 import Data.Functor.Contravariant (Op)
 --import Parser.Parser
-
+import Data.List 
 {-
 data Expr argumentType = 
       Var String 
@@ -18,10 +18,13 @@ data RExpr = RExpr (Expr RExpr) | Number Integer | Binary OpCode RExpression REx
 
 --data Definition = Definition LExpression RExpression -- f(x) = 4; x = 5;  in Version 2: a[i] = 8;
 data Definition = FunctionDef {funcName :: String , funcParams :: [String], funcBody :: Expression} 
-                | VariableDef {varName :: String, expr :: Expression} deriving (Show)
+                | VariableDef {varName :: String, expr :: Expression} deriving (Show, Eq)
 
-
-
+{-
+instance Show Definition where 
+    show (FunctionDef name params body) = name ++ "(" ++ intercalate ", " (show `map` params) ++ ")=" ++ show body
+    show (VariableDef name expr) = name ++ "=" ++ show expr
+-}
 --data LExpression = LVar String | LApplication {name :: String, param :: [String]}
 
 data Expression = -- Function {name :: String, param :: String, expr :: Expression} 
@@ -29,7 +32,16 @@ data Expression = -- Function {name :: String, param :: String, expr :: Expressi
     | Var String 
     | Application String [Expression]
     | Number Double
-    deriving (Show, Eq)
+    deriving (Eq)
+
+instance Show Expression where 
+    show (Binary o e1 e2)   = show e1 ++ show o ++ show e2 
+    show (Var s) = s 
+    show (Application name args) = name ++ "(" ++ intercalate ", " (show `map` args) ++ ")"
+    show (Number d) = show d 
+  
+
+
 
 
 {-

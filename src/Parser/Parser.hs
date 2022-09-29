@@ -2,11 +2,12 @@
 {-# HLINT ignore "Use <$>" #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Parser.Parser(functionDef, parseFunction, compileToJS) where
+module Parser.Parser(functionDef, parseFunction, compileToJS, parseReplInput) where
 import Text.ParserCombinators.Parsec hiding (token)
 import Parser.AbstractSyntax
 import Control.Monad
 import Data.List 
+import Parser.SymbolTable
 --import Text.Read (Lexeme(String))
 
 --chain :: Parser a -> Parser (a -> b -> b) -> Parser b
@@ -21,6 +22,7 @@ functionDef = do
     token '='
     body <- simpleExprLow -- man holt Inhalt aus der Monade raus
     return $ FunctionDef name params body
+
 
 --parameterErkennung :: Parser [String] -> Parser [String]
 {-
@@ -96,7 +98,7 @@ number = do
         integralPart :: Parser String
         integralPart = integer
         fractionalPart :: Parser String  -- '.' 
-        fractionalPart = (char '.' <|> char ',') >> many1 ( oneOf ['0'..'9'])
+        fractionalPart = (char '.' {-<|> char ',' -}) >> many1 ( oneOf ['0'..'9']) -- 1,2 ist nicht erlaubt, damit man später f(1,2) schriben kann für f(x,y)=x+y
    {-
     firstDigit <- head
     followingDigits <- tail
@@ -146,9 +148,9 @@ application :: Parser Expression
 application = do 
     functionName <- identifier
     token '('
-    argument <- simpleExprLow
+    arguments <- sepBy1 simpleExprLow (char ',')
     token ')'
-    return $ Application functionName [argument]
+    return $ Application functionName arguments
 
 
 tokenParser :: Parser Char -> Parser Char
@@ -159,6 +161,19 @@ token c = void (tokenParser $ char c)
 
 parseFunction :: String -> Either ParseError Definition
 parseFunction = parse (between spaces spaces (try functionDef <|> varDef)) "Problem beim Parser"
+
+parseReplInput :: String -> Either String ReplInput
+parseReplInput input = do 
+    case parseFunction input of
+        Right def -> Right (Def def) 
+        Left error1 -> case parse simpleExprLow   "Problem beim Parsen von Expression"   input of 
+            Right exp_parseReplInput -> Right $ Exp exp_parseReplInput
+            Left error2 -> Left $ show error1 ++ " : " ++ show error2
+        
+
+
+
+
 
 {-
 -- inputToJavaScript "f(x)=x*x"  
