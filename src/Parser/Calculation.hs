@@ -1,22 +1,36 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-module Parser.Calculation(replaceIdentifierInExpression, calculate, returnExpressionFromDef) where
+module Parser.Calculation(calculateExp) where
 
+import Data.List ( intercalate )
+import Parser.SymbolTable ( SymbolTable )
 import Parser.AbstractSyntax
-    ( Definition(VariableDef, FunctionDef, funcBody, expr),
-      Expression(Number, Binary, Var),
+    ( Definition(FunctionDef, VariableDef),
+      Expression(..),
       OpCode(Pow, Add, Sub, Mul, Div) )
 
+calculateExp :: Expression -> SymbolTable -> Either String Double
+calculateExp (Binary opCode exp1 exp2) table =
+  case (calculateExp exp1 table, calculateExp exp2 table) of
+    (Right erg1, Right erg2) -> Right (operator opCode erg1 erg2)
+    (Left err, Left _) -> Left err
+    (Left err, Right _) -> Left err
+    (Right _, Left err) -> Left err
+calculateExp (Number d) _ = Right d
+calculateExp (Var name) table =
+  case [(ident, def) | (ident, def) <- table, ident == name] of
+    [] -> Left $ "Keine Variable " ++ name ++ " vorhanden"
+    [(_, VariableDef _ expr)] -> calculateExp expr table
+    [(_, FunctionDef name params body)] -> Left $ name ++ "(" ++ intercalate ", " params ++ ")=" ++ show body
+    [x, y] -> Left "Bitte benenne die Parameter der verschachtelten Funktionen verschieden"
+    _ -> Left "ein anderer Fehler ist aufgetreten."
+calculateExp (Application name arguments) table =
+  case [(ident, def) | (ident, def) <- table, ident == name] of
+    [] -> Left $ "Keine Funktion " ++ name ++ " vorhanden"
+    [(_, FunctionDef _ params bodyExp)] -> calculateExp bodyExp $ table ++ paramsArgumentsMap params arguments
+    _ -> Left $ name ++ " ist keine Funktion"
 
-
-returnExpressionFromDef :: Definition -> Expression
-returnExpressionFromDef FunctionDef { funcBody = functionBody } = functionBody  
-returnExpressionFromDef VariableDef { expr = expression} = expression
-
-
-calculate :: Expression -> Double
-calculate (Binary op opLeft opRight) = operator op (calculate opLeft) (calculate opRight)
-calculate (Number d) = d     
-calculate _ = undefined
+paramsArgumentsMap :: [String] -> [Expression] -> SymbolTable
+paramsArgumentsMap params arguments = map (\(param, arg) -> (param, VariableDef param arg)) (zip params arguments)
 
 operator :: OpCode -> Double -> Double -> Double
 operator Add = (+)
@@ -25,15 +39,5 @@ operator Mul = (*)
 operator Div = (/)
 operator Pow = (**)
 operator _ = undefined
-
-{-
-    Nimmt eine Expression und eine Zahl entgegen und ersetzt jede Variable in der Expression mit dieser Zahl. ("Setzt die Zahl in die Funktion ein")
--}
-replaceIdentifierInExpression :: Expression -> Double -> Expression
-replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)
-replaceIdentifierInExpression (Number d) _ = Number d
-replaceIdentifierInExpression (Var _) x = Number x
-replaceIdentifierInExpression _ _= undefined
-
 
 

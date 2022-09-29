@@ -32,6 +32,3 @@ repl table = do
           case calculateExp expression table of
             Right erg -> print (show expression ++ " => " ++ show erg) >> repl table
             Left err -> print err >> repl table
-
-paramsArgumentsMap :: [String] -> [Expression] -> SymbolTable
-paramsArgumentsMap params arguments = map (\(param, arg) -> (param, VariableDef param arg)) (zip params arguments)

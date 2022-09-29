@@ -18,11 +18,7 @@ import Text.ParserCombinators.Parsec
       ParseError,
       Parser )
 import Parser.AbstractSyntax
-    ( Definition(VariableDef, FunctionDef),
-      Expression(..),
-      OpCode(Pow, Add, Sub, Mul, Div) )
 import Control.Monad ( void )
-import Parser.REPL
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -225,3 +221,7 @@ tokenParser = between spaces spaces
 -}
 token ::  Char -> Parser ()
 token c = void (tokenParser $ char c)
+
+returnExpressionFromDef :: Definition -> Expression
+returnExpressionFromDef FunctionDef { funcBody = functionBody } = functionBody  
+returnExpressionFromDef VariableDef { expr = expression} = expression

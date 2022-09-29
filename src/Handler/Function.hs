@@ -8,7 +8,7 @@ import Import.NoFoundation
       returnJson )
 import Data.Aeson()
 import Yesod.Core.Content()
-import Parser.Parser ( parseFunction )
+import Parser.Parser ( parseDefinition )
 import Parser.Compiler ( compileToJS )
 import Handler.JSONTypes ( Function(..) )
 
@@ -21,7 +21,7 @@ import Handler.JSONTypes ( Function(..) )
 postFunctionR :: Handler Value
 postFunctionR = do
     fun <- requireInsecureJsonBody :: Handler Function
-    case parseFunction (fnString fun) of
+    case parseDefinition (fnString fun) of
        Left _ -> returnJson $ Function "error"
        Right expr -> returnJson $ Function (compileToJS expr)
 

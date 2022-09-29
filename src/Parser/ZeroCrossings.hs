@@ -2,8 +2,9 @@
 {-# HLINT ignore "Use second" #-}
 module Parser.ZeroCrossings(calculateZeroPoints) where
 
-import Parser.AbstractSyntax
-import Text.Printf
+import Parser.AbstractSyntax ( Expression )
+import Text.Printf ( printf )
+import Pars
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -35,5 +36,3 @@ mapTupleToFirstString tupLst = [printf "%.2f" $ fst d | d <- tupLst]
 -}
 calculateZeroPoints :: Expression -> [String]
 calculateZeroPoints ex = mapTupleToFirstString $ findCloseToZero $ tryZeroPoints ex [-10.0,-9.999..10.0 ]
-
-
