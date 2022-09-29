@@ -28,12 +28,14 @@ import Parser.SymbolTable ( ReplInput(..) )
 
 -- AUFRUFEN DES PARSERS
 
-parseFunction :: String -> Either ParseError Definition
-parseFunction = parse (between spaces spaces (try functionDef <|> varDef)) "Problem beim Parser"
+
+parseDefinition :: String -> Either ParseError Definition
+parseDefinition = parse (between spaces spaces (try functionDef <|> varDef)) "Problem beim Parser"
+
 
 parseReplInput :: String -> Either String ReplInput
 parseReplInput input = do 
-    case parseFunction input of
+    case parseDefinition input of
         Right def -> Right (Def def) 
         Left error1 -> case parse simpleExprLow   "Problem beim Parsen von Expression"   input of 
             Right exp_parseReplInput -> Right $ Exp exp_parseReplInput
@@ -91,7 +93,7 @@ integer :: Parser String
 integer = many (tokenParser $ oneOf ['0'..'9'])
 
 {-
-    parst eine einzelne Zahl mit Nackommastellen
+    parst eine einzelne Zahl mit Nachkommastellen
 -}
 number :: Parser Expression
 number = do
@@ -103,6 +105,12 @@ number = do
         integralPart = integer
         fractionalPart :: Parser String
         fractionalPart = char '.' >> many1 ( oneOf ['0'..'9']) 
+
+{-
+    parst Variablen mit beliebigem gültigen Bezeichner
+-}
+var :: Parser Expression
+var = fmap Var identifier
 
 
 --------------------------------------------------------------------------------------------------------------------
@@ -146,7 +154,9 @@ simpleExprUnary = do {
 
 
 {-
-    parst eine geklammerte Expression oder eine einzelne Zahl
+    parst eine geklammerte Expression oder einen Wert, der 
+    aus einer Funktionsanwendung, einer Variable oder eine Zahl
+    resultieren kann
 -}
 simpleExprHigh :: Parser Expression
 simpleExprHigh = try application <|> try var <|>  do {
@@ -156,15 +166,32 @@ simpleExprHigh = try application <|> try var <|>  do {
     return expr;
 }  <|> number
 
+{-
+    Hilfsfunktion, die aus einem beliebigen Operator eine weiter-
+    verwendbare Binary Expression erstellt
+-}
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
+--fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
 opParser operator = fmap (const  (Binary operator)) (tokenParser $ char (head.show$operator))
 
+{-
+    erstellt eine Binary Expression mit niedrigster Präzedenz
+    aus den Operatoren + & -
+-}
 opCodeLow :: Parser (Expression -> Expression -> Expression)
 opCodeLow = opParser Add <|> opParser Sub
 
+{-
+    erstellt eine Binary Expression mit mittlerer Präzedenz
+    aus den Operatoren * & /
+-}
 opCodeMed :: Parser (Expression -> Expression -> Expression)
 opCodeMed = opParser Mul <|> opParser Div
 
+{-
+    erstellt eine Binary Expression mit bislang höchster Präzedenz
+    aus dem Potenz Operator
+-}
 opCodeMediHigh :: Parser (Expression -> Expression -> Expression)
 opCodeMediHigh = opParser Pow
 
@@ -179,15 +206,22 @@ application = do
     token ')'
     return $ Application functionName arguments
 
+
 --------------------------------------------------------------------------------------------------------------------
 
--- KATEGORIE NOCH UNKLAR
+-- HILFSFUNKTIONEN ÜBER ALLE KATEGORIEN HINWEG
 
-var :: Parser Expression
-var = fmap Var identifier
-
+{-
+    Hilfsfunktion, die erlaubt beliebig viele Whitespaces
+    zu parsen, ohne ihnen eine semantische Bedeutung zuzordnen,
+    oder sie als Parser Fehler zu interpretieren
+-}
 tokenParser :: Parser Char -> Parser Char
 tokenParser = between spaces spaces
 
+{-
+    Hilfsfunktion, die das problemlose Parsen von Whitespaces
+    vor und nach einem gelesenen Zeichen ermöglicht
+-}
 token ::  Char -> Parser ()
 token c = void (tokenParser $ char c)
