@@ -8,11 +8,12 @@ import Parser.AbstractSyntax
   )
 import Parser.Parser (parseReplInput)
 import Parser.SymbolTable
-  ( Entry,
-    ReplInput (Def, Exp),
+  ( 
+    Entry,
     SymbolTable,
     storeDefinition,
   )
+import Parser.REPL ( ReplInput(Exp, Def) )
 
 main :: IO ()
 main = do
@@ -82,4 +83,3 @@ operator Mul = (*)
 operator Div = (/)
 operator Pow = (**)
 
---operator _ = undefined

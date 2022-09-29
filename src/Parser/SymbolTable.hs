@@ -1,4 +1,4 @@
-module Parser.SymbolTable(SymbolTable, storeDefinition) where
+module Parser.SymbolTable(Entry, SymbolTable, storeDefinition) where
 
 import Parser.AbstractSyntax
     ( Definition(VariableDef, FunctionDef) )

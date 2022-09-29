@@ -28,7 +28,7 @@ data Expression =
 {-
     Operatoren, die unterstützt werden
 -}
-data OpCode = Add | Sub | Mul | Div | Pow | Log deriving (Eq)
+data OpCode = Add | Sub | Mul | Div | Pow deriving (Eq)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -46,4 +46,3 @@ instance Show OpCode where
     show Mul = "*"
     show Div = "/"
     show Pow = "^"
-    show Log = "ln"
