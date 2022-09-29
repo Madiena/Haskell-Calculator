@@ -4,7 +4,7 @@ module Parser.ZeroCrossings(calculateZeroPoints) where
 
 import Parser.AbstractSyntax ( Expression )
 import Text.Printf ( printf )
-import Pars
+import Parser.Calculation ()
 
 --------------------------------------------------------------------------------------------------------------------
 

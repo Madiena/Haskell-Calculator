@@ -21,7 +21,7 @@ calculateExp (Var name) table =
     [] -> Left $ "Keine Variable " ++ name ++ " vorhanden"
     [(_, VariableDef _ expr)] -> calculateExp expr table
     [(_, FunctionDef name params body)] -> Left $ name ++ "(" ++ intercalate ", " params ++ ")=" ++ show body
-    [x, y] -> Left "Bitte benenne die Parameter der verschachtelten Funktionen verschieden"
+    [_, _] -> Left "Bitte benenne die Parameter der verschachtelten Funktionen verschieden"
     _ -> Left "ein anderer Fehler ist aufgetreten."
 calculateExp (Application name arguments) table =
   case [(ident, def) | (ident, def) <- table, ident == name] of
@@ -38,6 +38,5 @@ operator Sub = (-)
 operator Mul = (*)
 operator Div = (/)
 operator Pow = (**)
-operator _ = undefined
 
 

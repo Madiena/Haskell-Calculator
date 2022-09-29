@@ -19,6 +19,7 @@ import Text.ParserCombinators.Parsec
       Parser )
 import Parser.AbstractSyntax
 import Control.Monad ( void )
+import Parser.REPL
 
 --------------------------------------------------------------------------------------------------------------------
 
