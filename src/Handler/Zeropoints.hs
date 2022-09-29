@@ -10,7 +10,7 @@ import Data.Aeson()
 import Yesod.Core.Content()
 import Parser.Parser ( parseFunction )
 import Parser.ZeroCrossings
-    ( calculateZeroPoints, returnExpressionFromDef )
+    ( calculateZeroPoints)
 import Handler.JSONTypes
     ( ZeroPoints(ZeroPoints), Function(fnString) )
 
