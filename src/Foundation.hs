@@ -21,6 +21,10 @@ data App = App
     , appLogger      :: Logger
     }
 
+--------------------------------------------------------------------------------------------------------------------
+
+-- VON YESOD GENERIERT
+
 mkYesodData "App" $(parseRoutesFile "config/routes.yesodroutes")
 
 type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)

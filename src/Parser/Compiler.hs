@@ -7,10 +7,20 @@ import Parser.AbstractSyntax
 import Data.List ( intercalate, intersperse )
 import Control.Monad ( join )
 
+--------------------------------------------------------------------------------------------------------------------
+
+-- COMPILER
+
+{-
+    Kompiliert eine Definition (siehe abstrakter Systaxbaum) zu JavaScript Code
+-}
 compileToJS :: Definition -> String
 compileToJS (FunctionDef name params body) = "function " ++ name ++ "(" ++ intercalate ", " params ++ ") {return " ++ compileExpToJS body ++ ";}"
 compileToJS (VariableDef name body) = "variable " ++ name ++ " = " ++ compileExpToJS body
 
+{-
+    Kompiliert eine einzelne Expression (siehe absttrakter Syntaxbaum) zu JavaScript Code
+-}
 compileExpToJS :: Expression -> String
 compileExpToJS (Var name) = name
 compileExpToJS (Number i) = show i

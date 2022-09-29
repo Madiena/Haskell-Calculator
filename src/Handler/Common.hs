@@ -7,10 +7,19 @@
 module Handler.Common where
 
 import Data.FileEmbed (embedFile)
-import Import
+import Foundation ( Handler )
+import Import.NoFoundation
+    ( ($),
+      Monad(return),
+      Num((*)),
+      typePlain,
+      cacheSeconds,
+      ToContent(toContent),
+      TypedContent(..) )
 
--- These handlers embed files in the executable at compile time to avoid a
--- runtime dependency, and for efficiency.
+--------------------------------------------------------------------------------------------------------------------
+
+-- GENERIERT VON YESOD
 
 getFaviconR :: Handler TypedContent
 getFaviconR = do cacheSeconds $ 60 * 60 * 24 * 30 -- cache for a month

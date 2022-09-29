@@ -22,7 +22,7 @@ import Parser.AbstractSyntax
       Expression(..),
       OpCode(Pow, Add, Sub, Mul, Div) )
 import Control.Monad ( void )
-import Parser.SymbolTable ( ReplInput(..) )
+import Parser.REPL
 
 --------------------------------------------------------------------------------------------------------------------
 

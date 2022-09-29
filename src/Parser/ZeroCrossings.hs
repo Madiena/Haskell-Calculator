@@ -8,14 +8,6 @@ import Text.Printf
 -- BERECHNUNG NULLSTELLEN
 
 {-
-    Nimmt eine Expression und eine Zahl entgegen und ersetzt jede Variable in der Expression mit dieser Zahl. ("Setzt die Zahl in die Funktion ein")
--}
-replaceIdentifierInExpression :: Expression -> Double -> Expression
-replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)
-replaceIdentifierInExpression (Number d) x = Number d
-replaceIdentifierInExpression (Var _) x = Number x
-
-{-
     setzt jeden Wert aus der Liste im Zweiten Argument in die Expression aus dem ersten Argument ein und gibt eine Liste aus Tupeln bestehend aus dem eingesetzten x-Wert 
     und dem damit berechneten y-Wert zurück
 -}
@@ -57,6 +49,15 @@ operator Sub = (-)
 operator Mul = (*)
 operator Div = (/)
 operator Pow = (**)
+
+{-
+    Nimmt eine Expression und eine Zahl entgegen und ersetzt jede Variable in der Expression mit dieser Zahl. ("Setzt die Zahl in die Funktion ein")
+-}
+replaceIdentifierInExpression :: Expression -> Double -> Expression
+replaceIdentifierInExpression (Binary op opLeft opRight) x = Binary op (replaceIdentifierInExpression opLeft x) (replaceIdentifierInExpression opRight x)
+replaceIdentifierInExpression (Number d) x = Number d
+replaceIdentifierInExpression (Var _) x = Number x
+replaceIdentifierInExpression _ = undefined
 
 
 
