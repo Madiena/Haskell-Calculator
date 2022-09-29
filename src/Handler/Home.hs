@@ -4,8 +4,10 @@ module Handler.Home where
 import Import
 import Data.Aeson()
 import Yesod.Core.Content()
-import Parser.Parser
+import Parser.Parser ( parseFunction )
 import Parser.ZeroCrossings
+    ( calculateZeroPoints, returnExpressionFromDef )
+import Parser.Compiler ( compileToJS )
 
 getHomeR :: Handler ()
 getHomeR = do sendFile typeHtml "static/index.html"
