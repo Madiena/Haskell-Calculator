@@ -1,9 +1,10 @@
-module Parser.REPL (repl) where
+module Parser.REPL (repl, parseReplInput) where
 
 import Parser.AbstractSyntax ( Definition, Expression )
 import Parser.SymbolTable ( SymbolTable, storeDefinition, updateTable)
 import Parser.Calculation ( calculateExp )
-import Parser.Parser (parseReplInput)
+import Parser.Parser ( simpleExprLow , parseDefinition)
+import Text.ParserCombinators.Parsec ( parse )
 
 {-
     Ein REPL Input besteht entweder aus einer Definition oder einer Expression
@@ -16,6 +17,15 @@ data ReplInput = Def Definition | Exp Expression
 instance Show ReplInput where 
     show (Def d)  = show d 
     show (Exp exp1) = show exp1
+
+    
+parseReplInput :: String -> Either String ReplInput
+parseReplInput input = do 
+    case parseDefinition input of
+        Right def -> Right (Def def) 
+        Left error1 -> case parse simpleExprLow   "Problem beim Parsen von Expression"   input of 
+            Right exp_parseReplInput -> Right $ Exp exp_parseReplInput
+            Left error2 -> Left $ show error1 ++ " : " ++ show error2
 
 repl :: SymbolTable -> IO ()
 repl table = do
@@ -32,3 +42,4 @@ repl table = do
           case calculateExp expression table of
             Right erg -> print (show expression ++ " => " ++ show erg) >> repl table
             Left err -> print err >> repl table
+

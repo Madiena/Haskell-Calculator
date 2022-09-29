@@ -2,7 +2,7 @@
 {-# HLINT ignore "Use <$>" #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Parser.Parser(functionDef, parseDefinition, parseReplInput) where
+module Parser.Parser(functionDef, parseDefinition, simpleExprLow) where
 import Text.ParserCombinators.Parsec
     ( char,
       oneOf,
@@ -19,7 +19,6 @@ import Text.ParserCombinators.Parsec
       Parser )
 import Parser.AbstractSyntax
 import Control.Monad ( void )
-import Parser.REPL
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -28,15 +27,6 @@ import Parser.REPL
 
 parseDefinition :: String -> Either ParseError Definition
 parseDefinition = parse (between spaces spaces (try functionDef <|> varDef)) "Problem beim Parser"
-
-
-parseReplInput :: String -> Either String ReplInput
-parseReplInput input = do 
-    case parseDefinition input of
-        Right def -> Right (Def def) 
-        Left error1 -> case parse simpleExprLow   "Problem beim Parsen von Expression"   input of 
-            Right exp_parseReplInput -> Right $ Exp exp_parseReplInput
-            Left error2 -> Left $ show error1 ++ " : " ++ show error2
 
 
 --------------------------------------------------------------------------------------------------------------------
