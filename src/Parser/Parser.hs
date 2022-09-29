@@ -176,14 +176,14 @@ opParser operator = fmap (const  (Binary operator)) (tokenParser $ char (head.sh
 
 {-
     erstellt eine Binary Expression mit niedrigster Präzedenz
-    aus den Operatoren + & -
+    aus den Operatoren + oder -
 -}
 opCodeLow :: Parser (Expression -> Expression -> Expression)
 opCodeLow = opParser Add <|> opParser Sub
 
 {-
     erstellt eine Binary Expression mit mittlerer Präzedenz
-    aus den Operatoren * & /
+    aus den Operatoren * oder /
 -}
 opCodeMed :: Parser (Expression -> Expression -> Expression)
 opCodeMed = opParser Mul <|> opParser Div
