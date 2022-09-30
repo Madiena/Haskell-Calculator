@@ -7,4 +7,6 @@
 
 /zeropoints ZeroR POST
 
+/calculate CalcR POST
+
 /static StaticR Static appStatic

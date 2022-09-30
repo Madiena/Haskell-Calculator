@@ -9,6 +9,11 @@ newtype Function = Function {
     fnString :: String 
 } deriving (Show, Generic)
 
+data CalcIn = ZeroPointsIn {
+    funString :: String,
+    vars :: [String]
+} deriving (Show, Generic)
+
 newtype ZeroPoints = ZeroPoints {
     zeroPoints :: [String]
 } deriving (Show, Generic)
@@ -19,6 +24,10 @@ instance FromJSON ZeroPoints
 
 instance ToJSON Function
 instance FromJSON Function
+
+instance ToJSON CalcIn
+instance FromJSON CalcIn
+
 
 
 

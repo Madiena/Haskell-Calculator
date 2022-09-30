@@ -1,5 +1,6 @@
+
 {-# LANGUAGE OverloadedStrings, BlockArguments #-}
-module Handler.Function where
+module Handler.Calculation where
 
 import Foundation ( Handler )
 import Import.NoFoundation
@@ -18,10 +19,9 @@ import Handler.JSONTypes ( Function(..) )
     POST Request, der den eingegebenen String entgegen nimmt und den Kompilierten JavaScript Code als String
     zurückgibt
 -}
-postFunctionR :: Handler Value
-postFunctionR = do
+postCalcR :: Handler Value
+postCalcR = do
     fun <- requireInsecureJsonBody :: Handler Function
     case parseDefinition (fnString fun) of
        Left _ -> returnJson $ Function "error"
        Right expr -> returnJson $ Function (compileToJS expr)
-

@@ -5,14 +5,17 @@ import Foundation ( Handler )
 import Import.NoFoundation
     ( Value,
       requireInsecureJsonBody,
-      returnJson )
+      returnJson, Default (def) )
 import Data.Aeson()
 import Yesod.Core.Content()
-import Parser.Parser ( parseFunction )
-import Parser.ZeroCrossings
+import Service.Parser ( parseDefinition )
+import Service.ZeroCrossings
     ( calculateZeroPoints)
 import Handler.JSONTypes
-    ( ZeroPoints(ZeroPoints), Function(fnString) )
+    ( ZeroPoints(ZeroPoints), CalcIn (funString, vars) )
+import Service.SymbolTable (SymbolTable, storeDefinition, updateTable)
+import Service.AbstractSyntax ( Definition )
+import Text.Parsec (ParseError)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -20,12 +23,23 @@ import Handler.JSONTypes
     POST Request, der ein JSON mit dem eingegebenen String entgegen nimmt und die Nullstellen und die geparste 
     Funktion also JSON zurückgibt
 -}
+mapToEntry :: [Either ParseError Definition] -> Either ParseError SymbolTable
+mapToEntry li = [ case d of 
+                    Right def -> storeDefinition def
+                    Left err -> err 
+                | d <- li]
+
+parseDefs :: [String] -> [Either ParseError Definition]
+parseDefs li = [parseDefinition d | d <- li]
 
 postZeroR :: Handler Value
 postZeroR = do
-    fun <- requireInsecureJsonBody :: Handler Function
-    case parseFunction $ fnString fun of 
-        Left _ -> returnJson $ ZeroPoints ["error"]
-        Right expr -> returnJson $ ZeroPoints (calculateZeroPoints $ returnExpressionFromDef expr)
-    
-    
+    fun <- requireInsecureJsonBody :: Handler CalcIn
+    parsedFun <- case parseDefinition $ funString fun of
+        Right def -> def :: Handler Definition
+        Left err -> returnJson $ ZeroPoints [err]
+    symbolTable <-  case updateTable (storeDefinition parsedFun) (mapToEntry $ parseDefs $ vars fun) of 
+        Right tab -> tab
+        Left err -> returnJson ZeroPoints [err]
+    returnJson $ ZeroPoints $ calculateZeroPoints symbolTable parsedFun
+

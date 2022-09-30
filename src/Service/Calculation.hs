@@ -1,12 +1,14 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-module Parser.Calculation(calculateExp) where
 
-import Data.List ( intercalate )
-import Parser.SymbolTable ( SymbolTable )
-import Parser.AbstractSyntax
-    ( Definition(FunctionDef, VariableDef),
-      Expression(..),
-      OpCode(Pow, Add, Sub, Mul, Div) )
+module Service.Calculation (calculateExp) where
+
+import Data.List (intercalate)
+import Service.AbstractSyntax
+  ( Definition (FunctionDef, VariableDef),
+    Expression (..),
+    OpCode (Add, Div, Mul, Pow, Sub),
+  )
+import Service.SymbolTable (SymbolTable)
 
 calculateExp :: Expression -> SymbolTable -> Either String Double
 calculateExp (Binary opCode exp1 exp2) table =
@@ -38,5 +40,3 @@ operator Sub = (-)
 operator Mul = (*)
 operator Div = (/)
 operator Pow = (**)
-
-

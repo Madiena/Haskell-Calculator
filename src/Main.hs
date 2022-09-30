@@ -1,18 +1,7 @@
 module Main where
 
-import Data.List (intercalate)
-import Parser.AbstractSyntax
-  ( Definition (FunctionDef, VariableDef),
-    Expression (..),
-    OpCode (Add, Div, Mul, Pow, Sub),
-  )
-import Parser.REPL (repl)
-import Parser.SymbolTable
-  ( 
-    Entry,
-    SymbolTable,
-    storeDefinition,
-  )
+import Service.REPL (repl)
+import Service.SymbolTable (SymbolTable)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -21,6 +10,3 @@ import Parser.SymbolTable
 main :: IO ()
 main = do
   repl ([] :: SymbolTable)
-
-
-
