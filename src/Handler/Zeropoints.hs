@@ -1,45 +1,51 @@
-{-# LANGUAGE OverloadedStrings, BlockArguments #-}
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Handler.Zeropoints where
 
-import Foundation ( Handler )
-import Import.NoFoundation
-    ( Value,
-      requireInsecureJsonBody,
-      returnJson, Default (def) )
-import Data.Aeson()
-import Yesod.Core.Content()
-import Service.Parser ( parseDefinition )
-import Service.ZeroCrossings
-    ( calculateZeroPoints)
+import Data.Aeson ()
+import Foundation (Handler)
 import Handler.JSONTypes
-    ( ZeroPoints(ZeroPoints), CalcIn (funString, vars) )
+  ( CalcIn (funString, vars),
+    ZeroPoints (ZeroPoints),
+  )
+import Import.NoFoundation
+  ( Default (def),
+    Value,
+    requireInsecureJsonBody,
+    returnJson,
+  )
+import Service.AbstractSyntax (Definition)
+import Service.Parser (parseDefinition)
 import Service.SymbolTable (SymbolTable, storeDefinition, updateTable)
-import Service.AbstractSyntax ( Definition )
+import Service.ZeroCrossings
+  ( calculateZeroPoints,
+  )
 import Text.Parsec (ParseError)
+import Yesod.Core.Content ()
 
 --------------------------------------------------------------------------------------------------------------------
 
 {-
-    POST Request, der ein JSON mit dem eingegebenen String entgegen nimmt und die Nullstellen und die geparste 
+    POST Request, der ein JSON mit dem eingegebenen String entgegen nimmt und die Nullstellen und die geparste
     Funktion also JSON zurückgibt
 -}
-mapToEntry :: [Either ParseError Definition] -> Either ParseError SymbolTable
-mapToEntry li = [ case d of 
-                    Right def -> storeDefinition def
-                    Left err -> err 
-                | d <- li]
+mapToEntry :: [Definition] -> SymbolTable
+mapToEntry li =
+  [ storeDefinition d | d <- li ]
 
-parseDefs :: [String] -> [Either ParseError Definition]
-parseDefs li = [parseDefinition d | d <- li]
+parseDefs :: [String] -> Either ParseError [Definition]
+parseDefs li = [parseDefinition d | d <- li, isRight $ parseDefinition d]
 
 postZeroR :: Handler Value
 postZeroR = do
-    fun <- requireInsecureJsonBody :: Handler CalcIn
-    parsedFun <- case parseDefinition $ funString fun of
-        Right def -> def :: Handler Definition
-        Left err -> returnJson $ ZeroPoints [err]
-    symbolTable <-  case updateTable (storeDefinition parsedFun) (mapToEntry $ parseDefs $ vars fun) of 
-        Right tab -> tab
-        Left err -> returnJson ZeroPoints [err]
-    returnJson $ ZeroPoints $ calculateZeroPoints symbolTable parsedFun
-
+  fun <- requireInsecureJsonBody :: Handler CalcIn
+  case parseDefinition $ funString fun of
+    Right parsedFun -> case parseDefs $ vars fun of 
+        Right parsed -> case updateTable (storeDefinition parsedFun) (mapToEntry parsed) of
+            Left err1 -> returnJson $ ZeroPoints [err1]
+            Right symbolTable -> case calculateZeroPoints symbolTable parsedFun of
+                Right zp -> returnJson $ ZeroPoints zp
+                Left err2 -> returnJson $ ZeroPoints [err2]
+        Left err5 -> returnJson $ ZeroPoints [show err5]
+    Left err -> returnJson $ ZeroPoints [show err]
