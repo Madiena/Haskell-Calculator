@@ -5,6 +5,7 @@ import Service.Calculation (calculateExp)
 import Service.Parser (parseDefinition, simpleExprLow)
 import Service.SymbolTable (SymbolTable, storeDefinition, updateTable)
 import Text.ParserCombinators.Parsec (parse)
+import Service.ZeroCrossings(calculateZeroPoints)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ instance Show ReplInput where
     Ist die Eingabe invalide, wird eine Fehlernachricht ausgegeben.
 -}
 parseReplInput :: String -> Either String ReplInput
-parseReplInput input = do
+parseReplInput input= do
   case parseDefinition input of
     Right def -> Right (Def def)
     Left error1 -> case parse simpleExprLow "Problem beim Parsen von Expression" input of
@@ -46,6 +47,8 @@ repl table = do
     Right entry ->
       case entry of
         Def definition -> do
+        if definition :: FunctionDef
+        then calculateZeroPoints
           case updateTable (storeDefinition definition) table of
             Right newTable -> repl newTable
             Left err -> print err >> repl table
