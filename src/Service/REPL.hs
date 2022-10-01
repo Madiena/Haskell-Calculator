@@ -47,8 +47,7 @@ repl table = do
     Right entry ->
       case entry of
         Def definition -> do
-        if definition :: FunctionDef
-        then calculateZeroPoints
+          print calculateZeroPoints
           case updateTable (storeDefinition definition) table of
             Right newTable -> repl newTable
             Left err -> print err >> repl table
