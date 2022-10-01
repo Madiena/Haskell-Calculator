@@ -14,13 +14,19 @@ data CalcIn = ZeroPointsIn {
     vars :: [String]
 } deriving (Show, Generic)
 
-newtype ZeroPoints = ZeroPoints {
+newtype Result = Result {
     zeroPoints :: [String]
 } deriving (Show, Generic)
 
+newtype ResultDouble = ResultDouble {
+    res :: Double
+} deriving (Show, Generic)
 
-instance ToJSON ZeroPoints
-instance FromJSON ZeroPoints
+instance ToJSON Result
+instance FromJSON Result
+
+instance ToJSON ResultDouble
+instance FromJSON ResultDouble
 
 instance ToJSON Function
 instance FromJSON Function

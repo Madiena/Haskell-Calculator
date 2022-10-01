@@ -8,6 +8,7 @@ import Service.AbstractSyntax (Expression (Application, Number), Definition (Var
 import Service.Calculation (calculateExp)
 import Text.Printf (printf)
 import Service.SymbolTable (SymbolTable)
+import Data.Either
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -22,8 +23,20 @@ buildApplication (FunctionDef name _ _) x = Right $ Application name [Number x]
     Liste aus Tupeln bestehend aus dem eingesetzten x-Wert und dem damit berechneten y-Wert zurück
 -}
 tryZeroPoints :: SymbolTable -> Definition -> [Double] -> Either String [(Double, Double)]
-tryZeroPoints st def li = [(d, calculateExp (buildApplication def d) st) | d <- li]
+tryZeroPoints st def li =  case filterEither [(d, case buildApplication def d of 
+    Left err -> Left err
+    Right appDef ->  case calculateExp appDef st of 
+        Left err -> Left err
+        Right res -> Right res) 
+    | d <- li] of 
+        Left err -> Left err
+        Right res -> Right res
 
+filterEither :: [(Double, Either String Double)] -> Either String [(Double, Double)]
+filterEither li = if not $ null [t | t <- li, isLeft $ snd t] then
+    Left "Fehler bei Berechnung" else
+    Right [(fst t, case snd t of
+        Right tRight -> tRight) | t <- li, isRight $ snd t]
 {-
     filtert die Liste aus "tryZeroPoints" nach y-Werten, die sehr nahe an 0 sind
 -}
@@ -40,6 +53,6 @@ mapTupleToFirstString tupLst = [printf "%.2f" $ fst d | d <- tupLst]
     Funktion, die am Ende die Nullstellen berechnet
 -}
 calculateZeroPoints :: SymbolTable -> Definition -> Either String [String]
-calculateZeroPoints st def = case tryZeroPoints st def [-10.0, -9.999 .. 10.0] of 
+calculateZeroPoints st def = case tryZeroPoints st def [-10.0, -9.999 .. 10.0] of
     Right zp -> Right $ mapTupleToFirstString $ findCloseToZero zp
     Left err -> Left err
