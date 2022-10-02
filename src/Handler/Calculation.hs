@@ -20,8 +20,8 @@ import Data.Either
 --------------------------------------------------------------------------------------------------------------------
 
 {-
-    POST Request, der den eingegebenen String entgegen nimmt und den Kompilierten JavaScript Code als String
-    zurückgibt
+    POST Request, der die gegebene Expression auswertet (Feld funString) unter Beachtung von definierten Variablen 
+    (Feld vars)
 -}
 postCalcR :: Handler Value
 postCalcR = do

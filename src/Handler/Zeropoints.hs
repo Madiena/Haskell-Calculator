@@ -24,8 +24,8 @@ import Yesod.Core.Content ()
 --------------------------------------------------------------------------------------------------------------------
 
 {-
-    POST Request, der ein JSON mit dem eingegebenen String entgegen nimmt und die Nullstellen und die geparste
-    Funktion also JSON zurückgibt
+    POST Request, der die Nullstellen zu einer gegebenen Funktion unter Beachtung von Variablen berechnet und als 
+    Array zurückgibt
 -}
 postZeroR :: Handler Value
 postZeroR = do

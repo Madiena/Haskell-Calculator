@@ -12,7 +12,7 @@
 	"fnString": String
  }
 ```
-* `/zeropoints`: nimmt auch ein JSON in der oben angegebenen Form an, welches die zu parsende Funktion enthält und gibt ein JSON zurück weelches die Nullstellen enthält (unter diesem Punkt angegeben)
+* `/zeropoints`: nimmt auch ein JSON in der oben angegebenen Form an, welches die zu parsende Funktion enthält und gibt ein JSON zurück weelches die Nullstellen enthält (unter diesem Punkt angegeben). Nullstellen werden nur im Intervall von -10 bis +10 gesucht.
 ```JSON
 Eingabe: {
 	"funString": String,
@@ -54,7 +54,7 @@ Man gebe die folgenden grau hinterlegten Angaben vor dem "--" in die REPL ein:
 * `f(5)` 
 
 ### Was in der REPL nicht geht
-Zum veranschaulichen betrachte man folgende Situation:
+Zum Veranschaulichen betrachte man folgende Situation:
 * `g(x)=x`
 * `f(x)=g(x) + 1`
 * `f(5)` 

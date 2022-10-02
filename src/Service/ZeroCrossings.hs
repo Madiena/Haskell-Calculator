@@ -14,6 +14,9 @@ import Data.Either
 
 -- BERECHNUNG NULLSTELLEN
 
+{-
+    baut aus einer Funktion f und einer Zahl x eine Funktionsanwendung f(x)
+-}
 buildApplication :: Definition -> Double -> Either String Expression
 buildApplication (VariableDef _ _) _ = Left "Application Auf Variablendefinition"
 buildApplication (FunctionDef name _ _) x = Right $ Application name [Number x]
@@ -32,11 +35,15 @@ tryZeroPoints st def li =  case filterEither [(d, case buildApplication def d of
         Left err -> Left err
         Right res -> Right res
 
+{-
+    schaut in einer Liste, die Eithers enthält, ob eins davon Left ist und gibt dann ein großes Left zurück
+-}
 filterEither :: [(Double, Either String Double)] -> Either String [(Double, Double)]
 filterEither li = if not $ null [t | t <- li, isLeft $ snd t] then
     Left "Fehler bei Berechnung der Nullstellen" else
     Right [(fst t, case snd t of
         Right tRight -> tRight) | t <- li, isRight $ snd t]
+
 {-
     filtert die Liste aus "tryZeroPoints" nach y-Werten, die sehr nahe an 0 sind
 -}
