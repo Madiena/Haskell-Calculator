@@ -9,31 +9,15 @@ import Import.NoFoundation
       returnJson )
 import Data.Aeson()
 import Yesod.Core.Content()
-import Service.Parser ( parseDefinition, returnExpressionFromDef )
-import Text.Parsec
-import Service.AbstractSyntax
 import Service.SymbolTable
-import Service.Calculation ( calculateExp )
+import Service.Calculation
+import Service.Parser
+import Text.Parsec
+import Handler.Helpers
 import Handler.JSONTypes
 import Data.Either
 
 --------------------------------------------------------------------------------------------------------------------
-
-mapToEntry :: [Definition] -> SymbolTable
-mapToEntry li =
-  [ storeDefinition d | d <- li ]
-
-parseDefs :: [String] -> Either String [Definition]
-parseDefs li = case filterRights [parseDefinition d | d <- li] of
-  Left err -> Left err
-  Right defs -> Right defs
-
-filterRights :: [Either ParseError Definition] -> Either String [Definition]
-filterRights li = if not $ null [t | t <- li, isLeft t] then
-    Left "Fehler bei Berechnung" else
-    Right [case t of
-      Right tRight -> tRight 
-    | t <- li, isRight t]
 
 {-
     POST Request, der den eingegebenen String entgegen nimmt und den Kompilierten JavaScript Code als String
