@@ -37,3 +37,4 @@ filterRights li = if not $ null [t | t <- li, isLeft t] then
     Right [case t of
       Right tRight -> tRight 
     | t <- li, isRight t] 
+    -- Left nicht gematcht weil an dem Punkt keine lefts mehr im Array stehen können

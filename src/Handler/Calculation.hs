@@ -12,10 +12,10 @@ import Yesod.Core.Content()
 import Service.SymbolTable
 import Service.Calculation
 import Service.Parser
-import Text.Parsec
+--import Text.Parsec
 import Handler.Helpers
 import Handler.JSONTypes
-import Data.Either
+import Data.Either (isLeft, isRight)
 
 --------------------------------------------------------------------------------------------------------------------
 

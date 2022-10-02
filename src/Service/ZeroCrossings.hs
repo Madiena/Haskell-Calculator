@@ -43,6 +43,7 @@ filterEither li = if not $ null [t | t <- li, isLeft $ snd t] then
     Left "Fehler bei Berechnung der Nullstellen" else
     Right [(fst t, case snd t of
         Right tRight -> tRight) | t <- li, isRight $ snd t]
+        --Left nicht gematcht weil an dem Punkt keine Lefts mehr im Array stehen können
 
 {-
     filtert die Liste aus "tryZeroPoints" nach y-Werten, die sehr nahe an 0 sind
