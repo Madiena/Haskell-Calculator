@@ -10,6 +10,9 @@ import Service.AbstractSyntax
   )
 import Service.SymbolTable (SymbolTable)
 
+{-
+    wertet eine Expression im Kontext einer Symboltabelle aus zu entweder einer Zahl oder einer Nachricht die in der REPL ausgegeben werden kann
+-}
 calculateExp :: Expression -> SymbolTable -> Either String Double
 calculateExp (Binary opCode exp1 exp2) table =
   case (calculateExp exp1 table, calculateExp exp2 table) of
@@ -31,9 +34,15 @@ calculateExp (Application name arguments) table =
     [(_, FunctionDef _ params bodyExp)] -> calculateExp bodyExp $ table ++ paramsArgumentsMap params arguments
     _ -> Left $ name ++ " ist keine Funktion"
 
+{-
+    Nimmt den i-ten String als name und die i-te Expression, baut daraus eine Variablendefinition, und fügt diese in eine Symboltablle ein.
+-}
 paramsArgumentsMap :: [String] -> [Expression] -> SymbolTable
 paramsArgumentsMap params arguments = map (\(param, arg) -> (param, VariableDef param arg)) (zip params arguments)
 
+{-
+    gibt zu einem Opcode die entsprechende Operation zurück
+-}
 operator :: OpCode -> Double -> Double -> Double
 operator Add = (+)
 operator Sub = (-)
