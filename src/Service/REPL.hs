@@ -49,10 +49,9 @@ repl table = do
         Def definition -> do
           case updateTable (storeDefinition definition) table of
             Right newTable -> case calculateZeroPoints newTable definition of
-              Right zp -> print ("zeropoints: " ++ show zp) >> repl newTable
-              Left err -> print err >> repl newTable
+              Right zp -> repl newTable
+              Left err -> repl newTable
             Left err -> print err >> repl table
-          
         Exp expression -> do
           case calculateExp expression table of
             Right erg -> print (show expression ++ " => " ++ show erg) >> repl table

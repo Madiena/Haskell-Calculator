@@ -162,7 +162,7 @@ simpleExprHigh =
 -}
 opParser :: OpCode -> Parser (Expression -> Expression -> Expression)
 --fmap (const operator) (char c) = fmap (\_ -> Add) (char '+')
-opParser operator = fmap (const (Binary operator)) (tokenParser $ char (head . show $operator))
+opParser operator = fmap (const (Binary operator)) (tokenParser $ char (head . show $ operator))
 
 {-
     erstellt eine Binary Expression mit niedrigster Präzedenz
