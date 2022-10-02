@@ -34,7 +34,7 @@ tryZeroPoints st def li =  case filterEither [(d, case buildApplication def d of
 
 filterEither :: [(Double, Either String Double)] -> Either String [(Double, Double)]
 filterEither li = if not $ null [t | t <- li, isLeft $ snd t] then
-    Left "Fehler bei Berechnung" else
+    Left "Fehler bei Berechnung der Nullstellen" else
     Right [(fst t, case snd t of
         Right tRight -> tRight) | t <- li, isRight $ snd t]
 {-

@@ -1,6 +1,6 @@
 module Service.REPL (repl, parseReplInput) where
 
-import Service.AbstractSyntax (Definition, Expression)
+import Service.AbstractSyntax (Definition(VariableDef, FunctionDef), Expression)
 import Service.Calculation (calculateExp)
 import Service.Parser (parseDefinition, simpleExprLow)
 import Service.SymbolTable (SymbolTable, storeDefinition, updateTable)
@@ -48,11 +48,11 @@ repl table = do
       case entry of
         Def definition -> do
           case updateTable (storeDefinition definition) table of
-            Right newTable -> repl newTable
+            Right newTable -> case calculateZeroPoints newTable definition of
+              Right zp -> print ("zeropoints: " ++ show zp) >> repl newTable
+              Left err -> print err >> repl newTable
             Left err -> print err >> repl table
-          case calculateZeroPoints table definition of
-            Right zp -> print zp >> repl table
-            Left err -> print err >> repl table
+          
         Exp expression -> do
           case calculateExp expression table of
             Right erg -> print (show expression ++ " => " ++ show erg) >> repl table
