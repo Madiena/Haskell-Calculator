@@ -44,7 +44,7 @@ findCloseToZero :: [(Double, Double)] -> [(Double, Double)]
 findCloseToZero li = filter ((< 0.001) . snd) [(fst d, abs $ snd d) | d <- li]
 
 {-
-    nimmt eine Liste aus Tupeln entgegen und gibt eine Liste bestehend aus dem ersten Wert des Tupels mit 2 Nackommastellen zurück.
+    nimmt eine Liste aus Tupeln entgegen und gibt eine Liste bestehend aus dem ersten Wert des Tupels mit 2 Nachkommastellen zurück.
 -}
 mapTupleToFirstString :: [(Double, Double)] -> [String]
 mapTupleToFirstString tupLst = [printf "%.2f" $ fst d | d <- tupLst]
