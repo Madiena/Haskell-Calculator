@@ -52,3 +52,19 @@ Man gebe die folgenden grau hinterlegten Angaben vor dem "--" in die REPL ein:
 * `f(5)`
 * `f(x)=x+g`
 * `f(5)` 
+
+### Was in der REPL nicht geht
+Zum veranschaulichen betrachte man folgende Situation:
+* `g(x)=x`
+* `f(x)=g(x) + 1`
+* `f(5)` 
+
+Um `f(5)` zu berechnen wird in die Symboltabelle die Variable `x=5` eingetragen. Um dann `g(x)` zu berechnen wird in die Symboltabelle wieder `x=5` eingetragen. Es ist nicht vorgesehen, dass zwei Variablem mit dem selben Namen in der Symboltabelle stehen. Somit führt diese Eingabe zum Fehlerfall. Folgende Eingabe führt nicht zum Fehlerfall:
+
+* `g(y)=y`
+* `f(x)=g(x) + 1`
+* `f(5)` 
+
+Nun wird bei der berechnung von `g(x)` keine Variable `x=5` angelegt sondern eine Variable `y=5`. 
+
+Eine mögliche Lösung: wenn `g(x)=x*x+1` in die REPL geschreiben wird, so werden zur weiterverarbeitung die lokalen Variablen umbenannt, sodass sie einzigartig für die Funktion sind. Hier würde also z.B. die Funktion `g(x_g)=x_g*x_g+1` abgespeichert werden. Somit kann es nicht mehr zu Namenskonflikten kommen.
