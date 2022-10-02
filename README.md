@@ -36,5 +36,19 @@ Rückgabe: {
 ```
 
 ## Nutzen der REPL
-* aus dem Ordner `/src/`: `ghci Main.hs`
-* in GHCI: `main`
+* Aus dem Ordner `/src/`starten: `ghci Main.hs` in Terminal eingeben
+* In GHCI `main` eingeben
+* Nun den gewünschten Mathematischen Ausdruck eingeben: Entweder eine Definition oder einen Ausdruck. 
+
+### Beispiel für REPL
+Man gebe die folgenden grau hinterlegten Angaben vor dem "--" in die REPL ein:
+* `h = 40` -- `h` wird definiert als die Zahl 40
+* `h` -- gibt den Wert von `h` in der REPL zurück
+* `g = h + 2` -- weist g den Wert von `h + 2` zu
+* `g` -- es kommt 42 zurück
+* `h = 10`
+* `g` -- es kommt 12 zurück
+* `f(x)=x*x`
+* `f(5)`
+* `f(x)=x+g`
+* `f(5)` 
