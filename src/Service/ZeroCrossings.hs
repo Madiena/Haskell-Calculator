@@ -54,5 +54,5 @@ mapTupleToFirstString tupLst = [printf "%.2f" $ fst d | d <- tupLst]
 -}
 calculateZeroPoints :: SymbolTable -> Definition -> Either String [String]
 calculateZeroPoints st def = case tryZeroPoints st def [-10.0, -9.999 .. 10.0] of
-    Right zp -> Right $ mapTupleToFirstString $ findCloseToZero zp
-    Left err -> Left err
+        Right zp -> Right $ mapTupleToFirstString $ findCloseToZero zp
+        Left err -> Left err
