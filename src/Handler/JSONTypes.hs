@@ -9,7 +9,7 @@ newtype Function = Function {
     fnString :: String 
 } deriving (Show, Generic)
 
-data CalcIn = ZeroPointsIn {
+data CalcIn = CalcIn {
     funString :: String,
     vars :: [String]
 } deriving (Show, Generic)
