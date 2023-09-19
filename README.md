@@ -1,5 +1,7 @@
 # Grafikrechner
 
+Projekt realisiert von [Nina Hammer](https://github.com/ninaham) & mir.
+
 ## Starten des Webservers
 
 * Bauen des Projekts und starten des Webservers: ```stack run```
